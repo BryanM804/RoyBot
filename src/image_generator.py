@@ -11,6 +11,8 @@ def generate_message_jpg(message, user, avatar):
             "browser.helperApps.neverAsk.saveToDisk": "text/csv"}
 
     op.add_argument("headless")
+    op.add_argument("no-sandbox")
+    op.enable_downloads = True
     op.add_experimental_option("prefs", prefs)
 
     driver = webdriver.Chrome(options=op)
@@ -38,12 +40,21 @@ def generate_message_jpg(message, user, avatar):
     download_button = driver.find_element(By.CLASS_NAME, "download-image")
 
     name_box.send_keys(user)
-    date_box.send_keys(f"Today at {datetime.now().hour if datetime.now().hour < 13 else datetime.now().hour - 12}:{datetime.now().minute if datetime.now().minute > 9 else "0" + datetime.now().minute} {"AM" if datetime.now().hour < 13 else "PM"}")
+    date_box.send_keys(f"Today at {datetime.now().hour if datetime.now().hour < 13 else datetime.now().hour - 12}:{datetime.now().minute if datetime.now().minute > 9 else "0" + str(datetime.now().minute)} {"AM" if datetime.now().hour < 13 else "PM"}")
     message_box.send_keys(message)
     avatar_box.send_keys(img_path)
 
     generate_button.click()
-    driver.implicitly_wait(2)
+    time.sleep(1)
+
+    generated_image_link = driver.find_element(By.CLASS_NAME, "generated-image").get_attribute("src")
+    #print(driver.get_downloadable_files())
+    #driver.download_file(generated_image_link, "/mnt/2tbdrive/projects/RoyBot")
+
+    # message_img_data = requests.get(generated_image_link).content
+    # with open(f"/mnt/2tbdrive/projects/RoyBot/message-imgs/{user}-message.jpeg", "wb") as message_file:
+    #     message_file.write(message_img_data)
+
     download_button.click()
     time.sleep(3)
     driver.close()
