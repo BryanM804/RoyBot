@@ -19,7 +19,7 @@ async def handle_message(client, message):
     contents = re.sub(r"[^(a-z|A-Z)]", "", contents)
 
     if "roy" in contents:
-        image_generator.generate_message_jpg(original, message.author.display_name, message.author.display_avatar.url)
+        image_generator.generate_message_jpg(original, message.author.display_name, message.author.display_avatar.url, message.author.color)
         try:
             message_path = await getFilePath()
             message_path = "/mnt/2tbdrive/projects/RoyBot/message-imgs/" + message_path
