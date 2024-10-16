@@ -14,8 +14,8 @@ def longest_line(str):
 
 def generate_message_img(message, user, avatar, color):
     
-    x = (longest_line(message) * 8) + 117 if ((longest_line(message) * 8) + 117) >= 375 else 375 # 8px for each character of the longest line in the message, plus padding
-    y = (message.count("\n") * 21) + 91 # 21px for each new line in a message
+    x = (longest_line(message) * 20) + 234 if ((longest_line(message) * 16) + 234) >= 750 else 750 # 8px for each character of the longest line in the message, plus padding
+    y = (message.count("\n") * 42) + 182 # 21px for each new line in a message
     
     # Mode, size, color
     message_img = Image.new("RGBA", (x, y), (49,51,56))
@@ -27,29 +27,26 @@ def generate_message_img(message, user, avatar, color):
     circle_draw.pieslice([(0, 0), square_avatar_img.size], 0, 360, fill=255)
     mask_arr = numpy.array(mask)
     avatarr = numpy.array(square_avatar_img)
-    avatar_img = Image.fromarray(numpy.dstack((avatarr, mask_arr))).resize((41, 41))
+    avatar_img = Image.fromarray(numpy.dstack((avatarr, mask_arr))).resize((82, 82))
 
     # Draw user avatar
-    message_img.paste(avatar_img, (25, 25), mask=avatar_img)
+    message_img.paste(avatar_img, (50, 50), mask=avatar_img)
 
     # Draw username text
     draw = ImageDraw.Draw(message_img)
-    draw.font = ImageFont.truetype("./font/ggsansMedium.ttf", size=16)
-    draw.text((81, 23), user, (color.r, color.g, color.b))
+    draw.font = ImageFont.truetype("./font/ggsansMedium.ttf", size=32)
+    draw.text((162, 46), user, (color.r, color.g, color.b))
 
     # Draw time string
     current_time = datetime.now().strftime("%I:%M %p")
     if datetime.now().hour < 10 or (datetime.now().hour > 12 and datetime.now().hour < 22):
         current_time = current_time[1:]
-    draw.font = ImageFont.truetype("./font/ggsansRegular.ttf", size=10)
-    draw.text(((81 + len(user) * 8), 29), f"Today at {current_time}", fill=(148,155,164))
+    draw.font = ImageFont.truetype("./font/ggsansRegular.ttf", size=20)
+    draw.text(((162 + len(user) * 16), 58), f"Today at {current_time}", fill=(148,155,164))
 
     # Draw main message text:
-    draw.font = ImageFont.truetype("./font/ggsansRegular.ttf", size=16)
-    draw.text((81, 43), message, fill=(219,222,225))
-
-    #Resize
-    message_img = message_img.resize((int(x * 1.5), int(y * 1.5)))
+    draw.font = ImageFont.truetype("./font/ggsansRegular.ttf", size=32)
+    draw.text((162, 86), message, fill=(219,222,225))
 
     # Save image
     with open(f"/mnt/2tbdrive/projects/RoyBot/message-imgs/roy-{roy_counter.roy_count}.png", "wb") as img_file:
