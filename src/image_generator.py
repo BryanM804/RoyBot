@@ -1,63 +1,58 @@
-import requests
-import time
+from PIL import Image, ImageDraw, ImageFont
+from io import BytesIO
 from datetime import datetime
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver import Keys, ActionChains
+import roy_counter
+import numpy
+import requests
 
-def generate_message_jpg(message, user, avatar, color):
-    op = webdriver.ChromeOptions()
-    prefs = {"download.default_directory" : "/mnt/2tbdrive/projects/RoyBot/message-imgs",
-            "browser.helperApps.neverAsk.saveToDisk": "text/csv"}
+def longest_line(str):
+    lines = str.split("\n")
+    max = 0
+    for line in lines:
+        max = len(line) if len(line) > max else max
+    return max
 
-    op.add_argument("headless")
-    op.add_argument("no-sandbox")
-    op.enable_downloads = True
-    op.add_experimental_option("prefs", prefs)
+def generate_message_img(message, user, avatar, color):
+    
+    x = (longest_line(message) * 8) + 117 if ((longest_line(message) * 8) + 117) >= 375 else 375 # 8px for each character of the longest line in the message, plus padding
+    y = (message.count("\n") * 21) + 91 # 21px for each new line in a message
+    
+    # Mode, size, color
+    message_img = Image.new("RGBA", (x, y), (49,51,56))
 
-    driver = webdriver.Chrome(options=op)
+    # Create cropped avatar image
+    square_avatar_img = Image.open(BytesIO(requests.get(avatar).content))
+    mask = Image.new("L", square_avatar_img.size, 0)
+    circle_draw = ImageDraw.Draw(mask)
+    circle_draw.pieslice([(0, 0), square_avatar_img.size], 0, 360, fill=255)
+    mask_arr = numpy.array(mask)
+    avatarr = numpy.array(square_avatar_img)
+    avatar_img = Image.fromarray(numpy.dstack((avatarr, mask_arr))).resize((41, 41))
 
-    # First, download avatar image
+    # Draw user avatar
+    message_img.paste(avatar_img, (25, 25), mask=avatar_img)
 
-    img_data = requests.get(avatar).content
-    img_path = f"/mnt/2tbdrive/projects/RoyBot/avatars/{user}.png"
-    with open(img_path, "wb") as user_avatar:
-        # wb for write bytes 4head
-        user_avatar.write(img_data)
+    # Draw username text
+    draw = ImageDraw.Draw(message_img)
+    draw.font = ImageFont.truetype("./font/ggsansMedium.ttf", size=16)
+    draw.text((81, 23), user, (color.r, color.g, color.b))
 
-    # Then go to message generator site and input the info for the message
+    # Draw time string
+    current_time = datetime.now().strftime("%I:%M %p")
+    if datetime.now().hour < 10 or (datetime.now().hour > 12 and datetime.now().hour < 22):
+        current_time = current_time[1:]
+    draw.font = ImageFont.truetype("./font/ggsansRegular.ttf", size=10)
+    draw.text(((81 + len(user) * 8), 29), f"Today at {current_time}", fill=(148,155,164))
 
-    driver.get("https://superemotes.com/fake-discord-message-maker")
+    # Draw main message text:
+    draw.font = ImageFont.truetype("./font/ggsansRegular.ttf", size=16)
+    draw.text((81, 43), message, fill=(219,222,225))
 
-    name_box = driver.find_element(By.ID, "message-username-1")
-    name_box.clear()
-    date_box = driver.find_element(By.ID, "message-date-1")
-    date_box.clear()
-    message_box = driver.find_element(By.ID, "message-body-1")
-    message_box.clear()
-    avatar_box = driver.find_element(By.ID, "pfp-file-upload-1")
-    generate_button = driver.find_element(By.CLASS_NAME, "generate-image-button")
-    download_button = driver.find_element(By.CLASS_NAME, "download-image")
+    #Resize
+    message_img = message_img.resize((int(x * 1.5), int(y * 1.5)))
 
-    name_box.send_keys(user)
-    name_box.click()
-    driver.execute_script(f"document.getElementById('message-username-1').style.color = 'rgb({color.r}, {color.g}, {color.b})'")
+    # Save image
+    with open(f"/mnt/2tbdrive/projects/RoyBot/message-imgs/roy-{roy_counter.roy_count}.png", "wb") as img_file:
+        message_img.save(img_file)
 
-    date_box.send_keys(f"Today at {datetime.now().hour if datetime.now().hour < 13 else datetime.now().hour - 12}:{datetime.now().minute if datetime.now().minute > 9 else "0" + str(datetime.now().minute)} {"AM" if datetime.now().hour < 13 else "PM"}")
-    message_box.send_keys(message)
-    avatar_box.send_keys(img_path)
-
-    generate_button.click()
-    time.sleep(1)
-
-    #generated_image_link = driver.find_element(By.CLASS_NAME, "generated-image").get_attribute("src")
-    #print(driver.get_downloadable_files())
-    #driver.download_file(generated_image_link, "/mnt/2tbdrive/projects/RoyBot")
-
-    # message_img_data = requests.get(generated_image_link).content
-    # with open(f"/mnt/2tbdrive/projects/RoyBot/message-imgs/{user}-message.jpeg", "wb") as message_file:
-    #     message_file.write(message_img_data)
-
-    download_button.click()
-    time.sleep(3)
-    driver.close()
+# generate_message_jpeg("Roy\nMilton\nBaker", "Hoeless Headless Horseman", "https://cdn.discordapp.com/avatars/154820680687288320/12cd0e649a75177dc9378c8a6631b397.webp?size=128", None)

@@ -2,6 +2,7 @@ import os
 import re
 import discord
 import roy_counter
+import image_loader
 import image_generator
 import image_circler
 
@@ -19,21 +20,16 @@ async def handle_message(client, message):
     contents = re.sub(r"[^(a-z|A-Z)]", "", contents)
 
     if "roy" in contents:
-        image_generator.generate_message_jpg(original, message.author.display_name, message.author.display_avatar.url, message.author.color)
+        roy_counter.inc_count(roy_counter.roy_count)
         try:
-            message_path = await getFilePath()
-            message_path = "/mnt/2tbdrive/projects/RoyBot/message-imgs/" + message_path
+            # image_loader.get_web_image(original, message.author.display_name, message.author.display_avatar.url, message.author.color)
 
-            image_circler.circle_roy(message_path)
-            roy_counter.inc_count(roy_counter.roy_count)
+            image_generator.generate_message_img(original, message.author.display_name, message.author.display_avatar.url, message.author.color)
+            image_circler.circle_roy(f"/mnt/2tbdrive/projects/RoyBot/message-imgs/roy-{roy_counter.roy_count}.png")
 
-            new_path = f"/mnt/2tbdrive/projects/RoyBot/message-imgs/roy-{roy_counter.roy_count}.jpeg"
-            os.rename(message_path, new_path)
-
-            await message.reply(f"# 🚨ROY ALERT🚨\nroy #{roy_counter.roy_count}", file=discord.File(new_path))
+            await message.reply(f"# 🚨ROY ALERT🚨\nroy #{roy_counter.roy_count}", file=discord.File(f"/mnt/2tbdrive/projects/RoyBot/message-imgs/roy-{roy_counter.roy_count}.png"))
         except Exception as e:
             print(e)
-            roy_counter.inc_count(roy_counter.roy_count)
             await message.reply(f"# 🚨ROY ALERT🚨\nroy #{roy_counter.roy_count}")
         await message.add_reaction("🇷")
         await message.add_reaction("🇴")
