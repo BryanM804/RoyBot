@@ -1,49 +1,63 @@
 import pytesseract
+from PIL import Image
 import cv2
 import re
-from PIL import Image
 
-def circle_roy(img):
+TEST_MODE = False
+
+def circle_word(img, word, case_sens=False):
     imge = Image.open(img)
-    data = pytesseract.image_to_boxes(imge)
+    word = word if case_sens else word.lower()
+    data = pytesseract.image_to_boxes(imge).lower().split("\n") if not case_sens else pytesseract.image_to_boxes(imge).split("\n")
+    data.remove("")
 
-    dirty_values = data.lower().replace("\n", " ").split(" ")
-    values = []
-    center = {}
+    # Format the data
+    double_d = []
+    for e in data:
+        li = e.split(" ")
+        for i in range(len(li)):
+            li[i] = int(li[i]) if i > 0 else li[i]
+        double_d.append(li)
+
+    if TEST_MODE:
+        print(double_d)
 
     cv_img = cv2.imread(img)
     h, w, l = cv_img.shape
-
     thickness = 2
     color = (0, 0, 255) # BGR ?? who tf uses BGR
 
-    roys_found = 0
-
     # Clear out non alpha characters
-    remove = False
-    for x in range(len(dirty_values)):
-        if x % 6 == 0:
-            remove = False
 
-        if x % 6 == 0 and re.search(r"[^(a-z|A-Z|0-9)]", dirty_values[x]) != None:
-            remove = True
-
-        if not remove:
-            values.append(dirty_values[x])
-
-    for i in range(len(values)):
-        # In theory this should never break out of bounds, but it checks anyway just to be safe
-        # Sometimes it picks up the 'o' as '0'
-        if i + 12 < len(values) and values[i] == "r" and (values[i + 6] == "o" or values[i + 6] == "0") and values[i + 12] == "y":
-            center["left"] = int(values[i + 7])
-            center["bottom"] = int(values[i + 8])
-            center["right"] = int(values[i + 9])
-            center["top"] = int(values[i + 10])
-            center_point = (int((center["left"] + center["right"]) / 2), h - int((center["top"] + center["bottom"]) / 2))
-            radius = (center_point[0] - int(values[i + 1])) + 7
-            cv2.circle(cv_img, center_point, radius if radius > 26 else 26, color, thickness)
-            #cv2.arrowedLine(cv_img, )
-            roys_found += 1
-    
+    matching = False
+    i = 0
+    start_pos = 0
+    end_pos = 0
+    for l in double_d:
+        if re.search(r"[^(a-z|A-Z|0-9)]", l[0]) != None:
+            continue
+        
+        if l[0] == word[i]:
+            if i == 0:
+                start_pos = l[1]
+            i += 1
+            matching = True
+        else:
+            matching = False
+            i = 0
+        
+        if i == len(word) and matching:
+            if TEST_MODE:
+                print("Circling [proud]")
+            end_pos = int(l[3])
+            center_point = (int((end_pos + start_pos) / 2), h - int((l[4] + l[2]) / 2))
+            r = int(((end_pos - start_pos) / 2) + 10)
+            cv2.circle(cv_img, center_point, r, color, thickness)
+            matching = False
+            i = 0
+            
     cv2.imwrite(img, cv_img)
-    return roys_found
+    return
+
+if TEST_MODE:
+    circle_word("/mnt/2tbdrive/projects/RoyBot/secret.png", "nigger")

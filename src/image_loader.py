@@ -5,7 +5,11 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver import Keys, ActionChains
 
+# DEPRECATED DO NOT USE
+
 def get_web_image(message, user, avatar, color):
+    print("[WARNING] This function is deprecated use the local generator, it's better anyway.")
+
     op = webdriver.ChromeOptions()
     prefs = {"download.default_directory" : "/mnt/2tbdrive/projects/RoyBot/message-imgs",
             "browser.helperApps.neverAsk.saveToDisk": "text/csv"}

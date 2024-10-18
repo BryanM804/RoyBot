@@ -1,5 +1,7 @@
 roy_count = 0
 
+# This is not thread safe, so funky things might happen if people spam messages
+
 try:
     with open("roy_count.txt", "r") as roy_file:
         contents = roy_file.read().split(":")
