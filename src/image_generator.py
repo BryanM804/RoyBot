@@ -4,18 +4,35 @@ from datetime import datetime
 import roy_counter
 import requests
 
+# DO NOT FORGET TO CHANGE
+# Bot will not generate images if TEST_MODE is True
 TEST_MODE = False
 
 def longest_line(str):
     lines = str.split("\n")
-    max = 0
+    max = ""
     for line in lines:
-        max = len(line) if len(line) > max else max
+        max = line if len(line) > len(max) else max
     return max
 
 def generate_message_img(message, user, avatar, color, secret=False):
+
+    # Add newlines to text that is too long
+    words = message.split(" ")
+    message = ""
+    line_count = 0
+    for word in words:
+        message += word + " "
+        if int(len(message) / 250) > line_count:
+            message += "\n"
+            line_count += 1
     
-    x = (longest_line(message) * 18) + 234 if ((longest_line(message) * 16) + 234) >= 750 else 750 # 20px for each character of the longest line in the message, plus padding
+    # Make a throw away draw to get the text length for the message image size
+    gdraw = ImageDraw.Draw(Image.new("L", (10, 10), 255))
+    gdraw.font = ImageFont.truetype("./font/ggsansRegular.ttf", size=32)
+
+    xlen = int(gdraw.textlength(longest_line(message), gdraw.font, font_size=32) + 234)
+    x = xlen if xlen >= 750 else 750
     y = (message.count("\n") * 40) + 182 # 40px for each new line in a message
     
     # Mode, size, color
@@ -70,4 +87,4 @@ def generate_message_img(message, user, avatar, color, secret=False):
             message_img.save(img_file)
     
 if TEST_MODE:
-    generate_message_img("Roy\nMilton\nB-a-ke-r", "Hoeless Headless Horseman", "https://cdn.discordapp.com/avatars/231186156757319680/109460aae45aef3221e7ebced37b3090.webp?size=128", None)
+    generate_message_img("royy baker, royy baker, royy baker,  royyy baker this message from mohammed kalakeen full face of kurdistan for youu royyy baker. you go check up in the docter; you have 2 yeal. your live is 2 yeal. 2 yeal from now, from today too 2 yeal o 1 yeal and 6 month o 2 yeal. you life. after this one you pass aweh. you go check up in the docter, this message from mohammed kalakeen full face of kurdistan. you do, do you good job for da usa for da 50 staet in 2 yeal. you do pull down iran for us, we want our kurdistan can-... new country no more iran no more iraq no more tourkey no more suri, full face of kurdistan; we give you", "Hoeless Headless Horseman", "https://cdn.discordapp.com/avatars/231186156757319680/109460aae45aef3221e7ebced37b3090.webp?size=128", None)

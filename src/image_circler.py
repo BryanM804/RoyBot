@@ -20,7 +20,8 @@ def circle_word(img, word, case_sens=False):
         double_d.append(li)
 
     if TEST_MODE:
-        print(double_d)
+        for letter in double_d:
+            print(letter)
 
     cv_img = cv2.imread(img)
     h, w, l = cv_img.shape
@@ -43,8 +44,18 @@ def circle_word(img, word, case_sens=False):
             i += 1
             matching = True
         else:
+            if TEST_MODE:
+                print(f"{l[0]} does not match {word[i]}")
             matching = False
             i = 0
+            # This looks terrible but hear me out
+            # If you had a double letter in the beginning of the word it would see the second
+            # character doesn't match the second in the word and skip it even though it matches the first letter
+            if l[0] == word[i]:
+                if i == 0:
+                    start_pos = l[1]
+                i += 1
+                matching = True
         
         if i == len(word) and matching:
             if TEST_MODE:
@@ -60,4 +71,4 @@ def circle_word(img, word, case_sens=False):
     return
 
 if TEST_MODE:
-    circle_word("/mnt/2tbdrive/projects/RoyBot/secret.png", "nigger")
+    circle_word("/mnt/2tbdrive/projects/RoyBot/asdasdasd.png", "roy")
