@@ -1,12 +1,17 @@
 import pytesseract
+import PIL
+import numpy
 from PIL import Image
+from PIL import ImageSequence
 import cv2
 import re
 
 TEST_MODE = False
 
-def circle_word(img, word, case_sens=False):
-    imge = Image.open(img)
+def circle_word(img, word, case_sens=False, success_dest=""):
+    success = False
+    imge = Image.open(img) if type(img) != PIL.GifImagePlugin.GifImageFile else img
+    imge = imge.convert("RGB")
     word = word if case_sens else word.lower()
     data = pytesseract.image_to_boxes(imge).lower().split("\n") if not case_sens else pytesseract.image_to_boxes(imge).split("\n")
     data.remove("")
@@ -23,7 +28,9 @@ def circle_word(img, word, case_sens=False):
         for letter in double_d:
             print(letter)
 
-    cv_img = cv2.imread(img)
+    # cv_img = cv2.imread(img)
+    cv_img = numpy.array(imge)
+    cv_img = cv_img[:, :, ::-1].copy()
     h, w, l = cv_img.shape
     thickness = 2
     color = (0, 0, 255) # BGR ?? who tf uses BGR
@@ -44,8 +51,8 @@ def circle_word(img, word, case_sens=False):
             i += 1
             matching = True
         else:
-            if TEST_MODE:
-                print(f"{l[0]} does not match {word[i]}")
+            # if TEST_MODE:
+                # print(f"{l[0]} does not match {word[i]}")
             matching = False
             i = 0
             # This looks terrible but hear me out
@@ -64,11 +71,23 @@ def circle_word(img, word, case_sens=False):
             center_point = (int((end_pos + start_pos) / 2), h - int((l[4] + l[2]) / 2))
             r = int(((end_pos - start_pos) / 2) + 10)
             cv2.circle(cv_img, center_point, r, color, thickness)
+            success = True
             matching = False
             i = 0
+    
+    if success and success_dest != "":
+        cv2.imwrite(success_dest, cv_img)
+    elif success:
+        cv2.imwrite(img, cv_img)
+    return success
+
+def circle_word_gif(gif_path, word, case_sens=False, success_dest=""):
+    gif = Image.open(gif_path)
+    for frame in ImageSequence.Iterator(gif):
+        if circle_word(frame, word, False, success_dest):
+            return True
+    return False
             
-    cv2.imwrite(img, cv_img)
-    return
 
 if TEST_MODE:
-    circle_word("/mnt/2tbdrive/projects/RoyBot/asdasdasd.png", "roy")
+    circle_word_gif("/mnt/2tbdrive/projects/RoyBot/attachment-749.gif", "roy", success_dest="/mnt/2tbdrive/projects/RoyBot/circled.png")
