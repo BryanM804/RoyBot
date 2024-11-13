@@ -46,7 +46,7 @@ async def handle_message(client, message):
         with open(f"/mnt/2tbdrive/projects/RoyBot/downloads/attachment-{roy_counter.roy_count + 1}.gif", "wb") as download:
             download.write(data)
 
-        if image_circler.circle_word_gif(f"/mnt/2tbdrive/projects/RoyBot/downloads/attachment-{roy_counter.roy_count + 1}.gif", "roy", success_dest=f"/mnt/2tbdrive/projects/RoyBot/downloads/attachment-{roy_counter.roy_count + 1}.jpeg"):
+        if image_circler.circle_word_gif(f"/mnt/2tbdrive/projects/RoyBot/downloads/attachment-{roy_counter.roy_count + 1}.gif", "roy", success_dest=f"/mnt/2tbdrive/projects/RoyBot/downloads/attachment-{roy_counter.roy_count + 1}.jpeg") or image_circler.circle_word_gif(f"/mnt/2tbdrive/projects/RoyBot/downloads/attachment-{roy_counter.roy_count + 1}.gif", "ctt", success_dest=f"/mnt/2tbdrive/projects/RoyBot/downloads/attachment-{roy_counter.roy_count + 1}.jpeg"):
                     roy_counter.inc_count(roy_counter.roy_count)
                     await message.reply(f"# 🚨ROY ALERT🚨\nroy #{roy_counter.roy_count}", file=discord.File(f"/mnt/2tbdrive/projects/RoyBot/downloads/attachment-{roy_counter.roy_count}.jpeg"))
     elif "roy" in contents:

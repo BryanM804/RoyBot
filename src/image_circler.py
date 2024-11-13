@@ -1,4 +1,5 @@
 import pytesseract
+import face_recognition
 import PIL
 import numpy
 from PIL import Image
@@ -13,7 +14,17 @@ def circle_word(img, word, case_sens=False, success_dest=""):
     imge = Image.open(img) if type(img) != PIL.GifImagePlugin.GifImageFile else img
     imge = imge.convert("RGB")
     word = word if case_sens else word.lower()
-    data = pytesseract.image_to_boxes(imge).lower().split("\n") if not case_sens else pytesseract.image_to_boxes(imge).split("\n")
+
+    cv_img = numpy.array(imge)
+    cv_img = cv_img[:, :, ::-1].copy()
+    # Tesseract is better at finding text in grayscale images with smooth text
+    kernel = numpy.ones((1,1), numpy.uint8)
+    gray_img = cv2.cvtColor(cv_img, cv2.COLOR_BGR2GRAY)
+    gray_img = cv2.dilate(gray_img, kernel, iterations=1)
+    gray_img = cv2.erode(gray_img, kernel, iterations=1)
+
+    # data = pytesseract.image_to_boxes(imge).lower().split("\n") if not case_sens else pytesseract.image_to_boxes(imge).split("\n")
+    data = pytesseract.image_to_boxes(gray_img).lower().split("\n") if not case_sens else pytesseract.image_to_boxes(gray_img).split("\n")
     data.remove("")
 
     # Format the data
@@ -28,9 +39,6 @@ def circle_word(img, word, case_sens=False, success_dest=""):
         for letter in double_d:
             print(letter)
 
-    # cv_img = cv2.imread(img)
-    cv_img = numpy.array(imge)
-    cv_img = cv_img[:, :, ::-1].copy()
     h, w, l = cv_img.shape
     thickness = 2
     color = (0, 0, 255) # BGR ?? who tf uses BGR
@@ -88,6 +96,10 @@ def circle_word_gif(gif_path, word, case_sens=False, success_dest=""):
             return True
     return False
             
+def circle_face(img):
+    
+    pass
+
 
 if TEST_MODE:
     circle_word_gif("/mnt/2tbdrive/projects/RoyBot/attachment-749.gif", "roy", success_dest="/mnt/2tbdrive/projects/RoyBot/circled.png")
