@@ -18,5 +18,4 @@ def save_count():
 def inc_count(count):
     global roy_count 
     roy_count += 1
-    if roy_count % 5 == 0:
-        save_count()
+    save_count()
