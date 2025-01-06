@@ -7,10 +7,11 @@ from PIL import ImageSequence
 from PIL import GifImagePlugin
 import cv2
 import re
+import os
 
 TEST_MODE = False
 
-roy_encoding = None
+roy_encoding = []
 
 def circle_word(img, word, case_sens=False, success_dest=""):
     success = False
@@ -100,15 +101,20 @@ def circle_gif(gif_path, word, case_sens=False, success_dest=""):
     return False
             
 def generate_roy_encoding():
-    # This takes forever, so the encoding is cached after the first time it gets generated
+    # This takes forever, so the encodings are cached after the first time they get generated
     # Changing the num_jitters will speed it up if necessary
     global roy_encoding
-    if roy_encoding != None:
+    if len(roy_encoding) != 0:
         return
     
-    roy_image = face_recognition.load_image_file("roy.png")
-    roy_encoding = face_recognition.face_encodings(roy_image, num_jitters = 3)
-    print("Generated Roy face encoding.")
+    try:
+        for roy_face in os.listdir("./roy_imgs"):
+            roy_image = face_recognition.load_image_file(f"./roy_imgs/{roy_face}")
+            roy_encoding.append(face_recognition.face_encodings(roy_image, num_jitters = 3))
+        print("Generated roy face encodings.")
+    except Exception as e:
+        print(f"Unable to generate encoding: {e}")
+    
 
 def circle_face(img_location, success_dest=""):
     # Check if img_location is valid to avoid errors
@@ -129,7 +135,7 @@ def circle_face(img_location, success_dest=""):
     else:
         print("Image contains faces")
 
-    if roy_encoding == None:
+    if len(roy_encoding) == 0:
         generate_roy_encoding()
 
     imge = Image.open(img_location) if type(img_location) != PIL.GifImagePlugin.GifImageFile else img_location
@@ -142,7 +148,7 @@ def circle_face(img_location, success_dest=""):
     i = 0
     for face in encodings:
         result = face_recognition.compare_faces(roy_encoding, face, tolerance=0.5)
-        if result[0] == True:
+        if True in result[0]:
             roy_loc = face_locs[i]
             # top, right, bottom, left
 

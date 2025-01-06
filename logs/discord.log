@@ -1,347 +1,59 @@
-[2025-01-04 22:21:10] [INFO    ] discord.client: logging in using static token
-[2025-01-04 22:21:11] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: 42f48cb0ff053b3b90e9cb4470da47ce).
-[2025-01-04 22:21:14] [ERROR   ] discord.client: Ignoring exception in on_message
+[2025-01-05 19:13:52] [INFO    ] discord.client: logging in using static token
+[2025-01-05 19:13:53] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: 98b2047004b745a26024f23e6988b617).
+[2025-01-05 19:15:56] [ERROR   ] discord.client: Ignoring exception in on_message
 Traceback (most recent call last):
+  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/discord/client.py", line 449, in _run_event
+    await coro(*args, **kwargs)
+  File "/mnt/2tbdrive/projects/RoyBot/src/main.py", line 19, in on_message
+    await messages.handle_message(client, message)
+  File "/mnt/2tbdrive/projects/RoyBot/src/handlers/messages.py", line 45, in handle_message
+    data = requests.get(results["results"][0]["media_formats"]["mediumgif"]["url"]).content
+                        ~~~~~~~^^^^^^^^^^^
+KeyError: 'results'
+[2025-01-05 19:21:36] [WARNING ] discord.gateway: Shard ID None heartbeat blocked for more than 10 seconds.
+Loop thread traceback (most recent call last):
+  File "/mnt/2tbdrive/projects/RoyBot/src/main.py", line 21, in <module>
+    client.run(secret_token.secret_token, log_handler=logger)
+  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/discord/client.py", line 869, in run
+    asyncio.run(runner())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run
+    return runner.run(main)
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 674, in run_until_complete
+    self.run_forever()
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 641, in run_forever
+    self._run_once()
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 1987, in _run_once
+    handle._run()
+  File "/usr/lib/python3.12/asyncio/events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
   File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/discord/client.py", line 449, in _run_event
     await coro(*args, **kwargs)
   File "/mnt/2tbdrive/projects/RoyBot/src/main.py", line 19, in on_message
     await messages.handle_message(client, message)
   File "/mnt/2tbdrive/projects/RoyBot/src/handlers/messages.py", line 55, in handle_message
     if image_circler.circle_gif(f"/mnt/2tbdrive/projects/RoyBot/downloads/attachment-{roy_counter.roy_count + 1}.gif", "roy", success_dest=f"/mnt/2tbdrive/projects/RoyBot/downloads/attachment-{roy_counter.roy_count + 1}.jpeg"):
-       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/mnt/2tbdrive/projects/RoyBot/src/image_circler.py", line 94, in circle_gif
-    gif = Image.open(gif_path)
-          ^^^^^^^^^^^^^^^^^^^^
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/PIL/Image.py", line 3498, in open
-    raise UnidentifiedImageError(msg)
-PIL.UnidentifiedImageError: cannot identify image file '/mnt/2tbdrive/projects/RoyBot/downloads/attachment-1236.gif'
-[2025-01-04 22:22:39] [ERROR   ] discord.client: Ignoring exception in on_message
-Traceback (most recent call last):
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/discord/client.py", line 449, in _run_event
-    await coro(*args, **kwargs)
-  File "/mnt/2tbdrive/projects/RoyBot/src/main.py", line 19, in on_message
-    await messages.handle_message(client, message)
-  File "/mnt/2tbdrive/projects/RoyBot/src/handlers/messages.py", line 51, in handle_message
-    data = requests.get(original).content
-           ^^^^^^^^^^^^^^^^^^^^^^
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/requests/api.py", line 73, in get
-    return request("get", url, params=params, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/requests/api.py", line 59, in request
-    return session.request(method=method, url=url, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/requests/sessions.py", line 589, in request
-    resp = self.send(prep, **send_kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/requests/sessions.py", line 697, in send
-    adapter = self.get_adapter(url=request.url)
-              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/requests/sessions.py", line 792, in get_adapter
-    raise InvalidSchema(f"No connection adapters were found for {url!r}")
-requests.exceptions.InvalidSchema: No connection adapters were found for 'because the actual link to that is https://cdn.discordapp.com/attachments/501926838960914443/1283901356268195860/togif.gif'
-[2025-01-04 22:24:47] [WARNING ] discord.gateway: Shard ID None heartbeat blocked for more than 10 seconds.
-Loop thread traceback (most recent call last):
-  File "/mnt/2tbdrive/projects/RoyBot/src/main.py", line 21, in <module>
-    client.run(secret_token.secret_token, log_handler=logger)
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/discord/client.py", line 869, in run
-    asyncio.run(runner())
-  File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run
-    return runner.run(main)
-  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
-    return self._loop.run_until_complete(task)
-  File "/usr/lib/python3.12/asyncio/base_events.py", line 674, in run_until_complete
-    self.run_forever()
-  File "/usr/lib/python3.12/asyncio/base_events.py", line 641, in run_forever
-    self._run_once()
-  File "/usr/lib/python3.12/asyncio/base_events.py", line 1987, in _run_once
-    handle._run()
-  File "/usr/lib/python3.12/asyncio/events.py", line 88, in _run
-    self._context.run(self._callback, *self._args)
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/discord/client.py", line 449, in _run_event
-    await coro(*args, **kwargs)
-  File "/mnt/2tbdrive/projects/RoyBot/src/main.py", line 19, in on_message
-    await messages.handle_message(client, message)
-  File "/mnt/2tbdrive/projects/RoyBot/src/handlers/messages.py", line 30, in handle_message
-    elif image_circler.circle_word(f"/mnt/2tbdrive/projects/RoyBot/downloads/attachment-{roy_counter.roy_count + 1}.{ext}", "roy") or image_circler.circle_face(f"/mnt/2tbdrive/projects/RoyBot/downloads/attachment-{roy_counter.roy_count + 1}.{ext}"):
-  File "/mnt/2tbdrive/projects/RoyBot/src/image_circler.py", line 125, in circle_face
-    face_locs = face_recognition.face_locations(image)
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/face_recognition/api.py", line 121, in face_locations
-    return [_trim_css_to_bounds(_rect_to_css(face), img.shape) for face in _raw_face_locations(img, number_of_times_to_upsample, model)]
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/face_recognition/api.py", line 105, in _raw_face_locations
-    return face_detector(img, number_of_times_to_upsample)
+  File "/mnt/2tbdrive/projects/RoyBot/src/image_circler.py", line 97, in circle_gif
+    if circle_word(frame, word, False, success_dest):
+  File "/mnt/2tbdrive/projects/RoyBot/src/image_circler.py", line 31, in circle_word
+    data = pytesseract.image_to_boxes(gray_img).lower().split("\n") if not case_sens else pytesseract.image_to_boxes(gray_img).split("\n")
+  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/pytesseract/pytesseract.py", line 552, in image_to_boxes
+    return {
+  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/pytesseract/pytesseract.py", line 559, in <lambda>
+    Output.STRING: lambda: run_and_get_output(*args),
+  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/pytesseract/pytesseract.py", line 352, in run_and_get_output
+    run_tesseract(**kwargs)
+  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/pytesseract/pytesseract.py", line 282, in run_tesseract
+    with timeout_manager(proc, timeout) as error_string:
+  File "/usr/lib/python3.12/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/pytesseract/pytesseract.py", line 144, in timeout_manager
+    yield proc.communicate()[1]
+  File "/usr/lib/python3.12/subprocess.py", line 1209, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+  File "/usr/lib/python3.12/subprocess.py", line 2115, in _communicate
+    ready = selector.select(timeout)
+  File "/usr/lib/python3.12/selectors.py", line 415, in select
+    fd_event_list = self._selector.poll(timeout)
 
-[2025-01-04 22:24:57] [WARNING ] discord.gateway: Shard ID None heartbeat blocked for more than 20 seconds.
-Loop thread traceback (most recent call last):
-  File "/mnt/2tbdrive/projects/RoyBot/src/main.py", line 21, in <module>
-    client.run(secret_token.secret_token, log_handler=logger)
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/discord/client.py", line 869, in run
-    asyncio.run(runner())
-  File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run
-    return runner.run(main)
-  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
-    return self._loop.run_until_complete(task)
-  File "/usr/lib/python3.12/asyncio/base_events.py", line 674, in run_until_complete
-    self.run_forever()
-  File "/usr/lib/python3.12/asyncio/base_events.py", line 641, in run_forever
-    self._run_once()
-  File "/usr/lib/python3.12/asyncio/base_events.py", line 1987, in _run_once
-    handle._run()
-  File "/usr/lib/python3.12/asyncio/events.py", line 88, in _run
-    self._context.run(self._callback, *self._args)
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/discord/client.py", line 449, in _run_event
-    await coro(*args, **kwargs)
-  File "/mnt/2tbdrive/projects/RoyBot/src/main.py", line 19, in on_message
-    await messages.handle_message(client, message)
-  File "/mnt/2tbdrive/projects/RoyBot/src/handlers/messages.py", line 30, in handle_message
-    elif image_circler.circle_word(f"/mnt/2tbdrive/projects/RoyBot/downloads/attachment-{roy_counter.roy_count + 1}.{ext}", "roy") or image_circler.circle_face(f"/mnt/2tbdrive/projects/RoyBot/downloads/attachment-{roy_counter.roy_count + 1}.{ext}"):
-  File "/mnt/2tbdrive/projects/RoyBot/src/image_circler.py", line 125, in circle_face
-    face_locs = face_recognition.face_locations(image)
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/face_recognition/api.py", line 121, in face_locations
-    return [_trim_css_to_bounds(_rect_to_css(face), img.shape) for face in _raw_face_locations(img, number_of_times_to_upsample, model)]
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/face_recognition/api.py", line 105, in _raw_face_locations
-    return face_detector(img, number_of_times_to_upsample)
-
-[2025-01-04 22:25:07] [WARNING ] discord.gateway: Shard ID None heartbeat blocked for more than 30 seconds.
-Loop thread traceback (most recent call last):
-  File "/mnt/2tbdrive/projects/RoyBot/src/main.py", line 21, in <module>
-    client.run(secret_token.secret_token, log_handler=logger)
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/discord/client.py", line 869, in run
-    asyncio.run(runner())
-  File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run
-    return runner.run(main)
-  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
-    return self._loop.run_until_complete(task)
-  File "/usr/lib/python3.12/asyncio/base_events.py", line 674, in run_until_complete
-    self.run_forever()
-  File "/usr/lib/python3.12/asyncio/base_events.py", line 641, in run_forever
-    self._run_once()
-  File "/usr/lib/python3.12/asyncio/base_events.py", line 1987, in _run_once
-    handle._run()
-  File "/usr/lib/python3.12/asyncio/events.py", line 88, in _run
-    self._context.run(self._callback, *self._args)
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/discord/client.py", line 449, in _run_event
-    await coro(*args, **kwargs)
-  File "/mnt/2tbdrive/projects/RoyBot/src/main.py", line 19, in on_message
-    await messages.handle_message(client, message)
-  File "/mnt/2tbdrive/projects/RoyBot/src/handlers/messages.py", line 30, in handle_message
-    elif image_circler.circle_word(f"/mnt/2tbdrive/projects/RoyBot/downloads/attachment-{roy_counter.roy_count + 1}.{ext}", "roy") or image_circler.circle_face(f"/mnt/2tbdrive/projects/RoyBot/downloads/attachment-{roy_counter.roy_count + 1}.{ext}"):
-  File "/mnt/2tbdrive/projects/RoyBot/src/image_circler.py", line 125, in circle_face
-    face_locs = face_recognition.face_locations(image)
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/face_recognition/api.py", line 121, in face_locations
-    return [_trim_css_to_bounds(_rect_to_css(face), img.shape) for face in _raw_face_locations(img, number_of_times_to_upsample, model)]
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/face_recognition/api.py", line 105, in _raw_face_locations
-    return face_detector(img, number_of_times_to_upsample)
-
-[2025-01-04 22:25:17] [WARNING ] discord.gateway: Shard ID None heartbeat blocked for more than 40 seconds.
-Loop thread traceback (most recent call last):
-  File "/mnt/2tbdrive/projects/RoyBot/src/main.py", line 21, in <module>
-    client.run(secret_token.secret_token, log_handler=logger)
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/discord/client.py", line 869, in run
-    asyncio.run(runner())
-  File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run
-    return runner.run(main)
-  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
-    return self._loop.run_until_complete(task)
-  File "/usr/lib/python3.12/asyncio/base_events.py", line 674, in run_until_complete
-    self.run_forever()
-  File "/usr/lib/python3.12/asyncio/base_events.py", line 641, in run_forever
-    self._run_once()
-  File "/usr/lib/python3.12/asyncio/base_events.py", line 1987, in _run_once
-    handle._run()
-  File "/usr/lib/python3.12/asyncio/events.py", line 88, in _run
-    self._context.run(self._callback, *self._args)
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/discord/client.py", line 449, in _run_event
-    await coro(*args, **kwargs)
-  File "/mnt/2tbdrive/projects/RoyBot/src/main.py", line 19, in on_message
-    await messages.handle_message(client, message)
-  File "/mnt/2tbdrive/projects/RoyBot/src/handlers/messages.py", line 30, in handle_message
-    elif image_circler.circle_word(f"/mnt/2tbdrive/projects/RoyBot/downloads/attachment-{roy_counter.roy_count + 1}.{ext}", "roy") or image_circler.circle_face(f"/mnt/2tbdrive/projects/RoyBot/downloads/attachment-{roy_counter.roy_count + 1}.{ext}"):
-  File "/mnt/2tbdrive/projects/RoyBot/src/image_circler.py", line 125, in circle_face
-    face_locs = face_recognition.face_locations(image)
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/face_recognition/api.py", line 121, in face_locations
-    return [_trim_css_to_bounds(_rect_to_css(face), img.shape) for face in _raw_face_locations(img, number_of_times_to_upsample, model)]
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/face_recognition/api.py", line 105, in _raw_face_locations
-    return face_detector(img, number_of_times_to_upsample)
-
-[2025-01-04 22:25:27] [WARNING ] discord.gateway: Shard ID None heartbeat blocked for more than 50 seconds.
-Loop thread traceback (most recent call last):
-  File "/mnt/2tbdrive/projects/RoyBot/src/main.py", line 21, in <module>
-    client.run(secret_token.secret_token, log_handler=logger)
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/discord/client.py", line 869, in run
-    asyncio.run(runner())
-  File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run
-    return runner.run(main)
-  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
-    return self._loop.run_until_complete(task)
-  File "/usr/lib/python3.12/asyncio/base_events.py", line 674, in run_until_complete
-    self.run_forever()
-  File "/usr/lib/python3.12/asyncio/base_events.py", line 641, in run_forever
-    self._run_once()
-  File "/usr/lib/python3.12/asyncio/base_events.py", line 1987, in _run_once
-    handle._run()
-  File "/usr/lib/python3.12/asyncio/events.py", line 88, in _run
-    self._context.run(self._callback, *self._args)
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/discord/client.py", line 449, in _run_event
-    await coro(*args, **kwargs)
-  File "/mnt/2tbdrive/projects/RoyBot/src/main.py", line 19, in on_message
-    await messages.handle_message(client, message)
-  File "/mnt/2tbdrive/projects/RoyBot/src/handlers/messages.py", line 30, in handle_message
-    elif image_circler.circle_word(f"/mnt/2tbdrive/projects/RoyBot/downloads/attachment-{roy_counter.roy_count + 1}.{ext}", "roy") or image_circler.circle_face(f"/mnt/2tbdrive/projects/RoyBot/downloads/attachment-{roy_counter.roy_count + 1}.{ext}"):
-  File "/mnt/2tbdrive/projects/RoyBot/src/image_circler.py", line 133, in circle_face
-    generate_roy_encoding()
-  File "/mnt/2tbdrive/projects/RoyBot/src/image_circler.py", line 110, in generate_roy_encoding
-    roy_encoding = face_recognition.face_encodings(roy_image, num_jitters = 3)
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/face_recognition/api.py", line 213, in face_encodings
-    raw_landmarks = _raw_face_landmarks(face_image, known_face_locations, model)
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/face_recognition/api.py", line 156, in _raw_face_landmarks
-    face_locations = _raw_face_locations(face_image)
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/face_recognition/api.py", line 105, in _raw_face_locations
-    return face_detector(img, number_of_times_to_upsample)
-
-[2025-01-04 22:25:33] [INFO    ] discord.gateway: Shard ID None has successfully RESUMED session 42f48cb0ff053b3b90e9cb4470da47ce.
-[2025-01-04 22:26:24] [WARNING ] discord.gateway: Shard ID None heartbeat blocked for more than 10 seconds.
-Loop thread traceback (most recent call last):
-  File "/mnt/2tbdrive/projects/RoyBot/src/main.py", line 21, in <module>
-    client.run(secret_token.secret_token, log_handler=logger)
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/discord/client.py", line 869, in run
-    asyncio.run(runner())
-  File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run
-    return runner.run(main)
-  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
-    return self._loop.run_until_complete(task)
-  File "/usr/lib/python3.12/asyncio/base_events.py", line 674, in run_until_complete
-    self.run_forever()
-  File "/usr/lib/python3.12/asyncio/base_events.py", line 641, in run_forever
-    self._run_once()
-  File "/usr/lib/python3.12/asyncio/base_events.py", line 1987, in _run_once
-    handle._run()
-  File "/usr/lib/python3.12/asyncio/events.py", line 88, in _run
-    self._context.run(self._callback, *self._args)
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/discord/client.py", line 449, in _run_event
-    await coro(*args, **kwargs)
-  File "/mnt/2tbdrive/projects/RoyBot/src/main.py", line 19, in on_message
-    await messages.handle_message(client, message)
-  File "/mnt/2tbdrive/projects/RoyBot/src/handlers/messages.py", line 30, in handle_message
-    elif image_circler.circle_word(f"/mnt/2tbdrive/projects/RoyBot/downloads/attachment-{roy_counter.roy_count + 1}.{ext}", "roy") or image_circler.circle_face(f"/mnt/2tbdrive/projects/RoyBot/downloads/attachment-{roy_counter.roy_count + 1}.{ext}"):
-  File "/mnt/2tbdrive/projects/RoyBot/src/image_circler.py", line 125, in circle_face
-    face_locs = face_recognition.face_locations(image)
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/face_recognition/api.py", line 121, in face_locations
-    return [_trim_css_to_bounds(_rect_to_css(face), img.shape) for face in _raw_face_locations(img, number_of_times_to_upsample, model)]
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/face_recognition/api.py", line 105, in _raw_face_locations
-    return face_detector(img, number_of_times_to_upsample)
-
-[2025-01-04 22:26:34] [WARNING ] discord.gateway: Shard ID None heartbeat blocked for more than 20 seconds.
-Loop thread traceback (most recent call last):
-  File "/mnt/2tbdrive/projects/RoyBot/src/main.py", line 21, in <module>
-    client.run(secret_token.secret_token, log_handler=logger)
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/discord/client.py", line 869, in run
-    asyncio.run(runner())
-  File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run
-    return runner.run(main)
-  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
-    return self._loop.run_until_complete(task)
-  File "/usr/lib/python3.12/asyncio/base_events.py", line 674, in run_until_complete
-    self.run_forever()
-  File "/usr/lib/python3.12/asyncio/base_events.py", line 641, in run_forever
-    self._run_once()
-  File "/usr/lib/python3.12/asyncio/base_events.py", line 1987, in _run_once
-    handle._run()
-  File "/usr/lib/python3.12/asyncio/events.py", line 88, in _run
-    self._context.run(self._callback, *self._args)
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/discord/client.py", line 449, in _run_event
-    await coro(*args, **kwargs)
-  File "/mnt/2tbdrive/projects/RoyBot/src/main.py", line 19, in on_message
-    await messages.handle_message(client, message)
-  File "/mnt/2tbdrive/projects/RoyBot/src/handlers/messages.py", line 30, in handle_message
-    elif image_circler.circle_word(f"/mnt/2tbdrive/projects/RoyBot/downloads/attachment-{roy_counter.roy_count + 1}.{ext}", "roy") or image_circler.circle_face(f"/mnt/2tbdrive/projects/RoyBot/downloads/attachment-{roy_counter.roy_count + 1}.{ext}"):
-  File "/mnt/2tbdrive/projects/RoyBot/src/image_circler.py", line 125, in circle_face
-    face_locs = face_recognition.face_locations(image)
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/face_recognition/api.py", line 121, in face_locations
-    return [_trim_css_to_bounds(_rect_to_css(face), img.shape) for face in _raw_face_locations(img, number_of_times_to_upsample, model)]
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/face_recognition/api.py", line 105, in _raw_face_locations
-    return face_detector(img, number_of_times_to_upsample)
-
-[2025-01-04 22:26:44] [WARNING ] discord.gateway: Shard ID None heartbeat blocked for more than 30 seconds.
-Loop thread traceback (most recent call last):
-  File "/mnt/2tbdrive/projects/RoyBot/src/main.py", line 21, in <module>
-    client.run(secret_token.secret_token, log_handler=logger)
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/discord/client.py", line 869, in run
-    asyncio.run(runner())
-  File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run
-    return runner.run(main)
-  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
-    return self._loop.run_until_complete(task)
-  File "/usr/lib/python3.12/asyncio/base_events.py", line 674, in run_until_complete
-    self.run_forever()
-  File "/usr/lib/python3.12/asyncio/base_events.py", line 641, in run_forever
-    self._run_once()
-  File "/usr/lib/python3.12/asyncio/base_events.py", line 1987, in _run_once
-    handle._run()
-  File "/usr/lib/python3.12/asyncio/events.py", line 88, in _run
-    self._context.run(self._callback, *self._args)
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/discord/client.py", line 449, in _run_event
-    await coro(*args, **kwargs)
-  File "/mnt/2tbdrive/projects/RoyBot/src/main.py", line 19, in on_message
-    await messages.handle_message(client, message)
-  File "/mnt/2tbdrive/projects/RoyBot/src/handlers/messages.py", line 30, in handle_message
-    elif image_circler.circle_word(f"/mnt/2tbdrive/projects/RoyBot/downloads/attachment-{roy_counter.roy_count + 1}.{ext}", "roy") or image_circler.circle_face(f"/mnt/2tbdrive/projects/RoyBot/downloads/attachment-{roy_counter.roy_count + 1}.{ext}"):
-  File "/mnt/2tbdrive/projects/RoyBot/src/image_circler.py", line 136, in circle_face
-    imge = imge.convert("RGB")
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/PIL/Image.py", line 995, in convert
-    self.load()
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/PIL/ImageFile.py", line 293, in load
-    n, err_code = decoder.decode(b)
-
-[2025-01-04 22:26:51] [ERROR   ] discord.client: Ignoring exception in on_message
-Traceback (most recent call last):
-  File "/usr/lib/python3.12/asyncio/selector_events.py", line 988, in _read_ready__get_buffer
-    nbytes = self._sock.recv_into(buf)
-             ^^^^^^^^^^^^^^^^^^^^^^^^^
-ConnectionResetError: [Errno 104] Connection reset by peer
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/discord/client.py", line 449, in _run_event
-    await coro(*args, **kwargs)
-  File "/mnt/2tbdrive/projects/RoyBot/src/main.py", line 19, in on_message
-    await messages.handle_message(client, message)
-  File "/mnt/2tbdrive/projects/RoyBot/src/handlers/messages.py", line 32, in handle_message
-    await message.reply(f"# 🚨ROY ALERT🚨\nroy #{roy_counter.roy_count}", file=discord.File(f"/mnt/2tbdrive/projects/RoyBot/downloads/attachment-{roy_counter.roy_count}.{ext}"))
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/discord/message.py", line 1564, in reply
-    return await self.channel.send(content, reference=self, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/discord/abc.py", line 1618, in send
-    data = await state.http.send_message(channel.id, params=params)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/discord/http.py", line 638, in request
-    async with self.__session.request(method, url, **kwargs) as response:
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/aiohttp/client.py", line 1357, in __aenter__
-    self._resp: _RetType = await self._coro
-                           ^^^^^^^^^^^^^^^^
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/aiohttp/client.py", line 688, in _request
-    await resp.start(conn)
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/aiohttp/client_reqrep.py", line 1058, in start
-    message, payload = await protocol.read()  # type: ignore[union-attr]
-                       ^^^^^^^^^^^^^^^^^^^^^
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/aiohttp/streams.py", line 643, in read
-    await self._waiter
-aiohttp.client_exceptions.ClientOSError: [Errno 104] Connection reset by peer
-[2025-01-04 22:26:51] [INFO    ] discord.gateway: Shard ID None has successfully RESUMED session 42f48cb0ff053b3b90e9cb4470da47ce.
-[2025-01-04 22:26:53] [ERROR   ] discord.client: Ignoring exception in on_message
-Traceback (most recent call last):
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/discord/client.py", line 449, in _run_event
-    await coro(*args, **kwargs)
-  File "/mnt/2tbdrive/projects/RoyBot/src/main.py", line 19, in on_message
-    await messages.handle_message(client, message)
-  File "/mnt/2tbdrive/projects/RoyBot/src/handlers/messages.py", line 32, in handle_message
-    await message.reply(f"# 🚨ROY ALERT🚨\nroy #{roy_counter.roy_count}", file=discord.File(f"/mnt/2tbdrive/projects/RoyBot/downloads/attachment-{roy_counter.roy_count}.{ext}"))
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/discord/message.py", line 1564, in reply
-    return await self.channel.send(content, reference=self, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/discord/abc.py", line 1618, in send
-    data = await state.http.send_message(channel.id, params=params)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/discord/http.py", line 758, in request
-    raise HTTPException(response, data)
-discord.errors.HTTPException: 413 Payload Too Large (error code: 40005): Request entity too large

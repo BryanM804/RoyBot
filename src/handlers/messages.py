@@ -37,12 +37,17 @@ async def handle_message(client, message):
     contents = original.lower().replace(" ", "")
     contents = re.sub(r"[^(a-z|A-Z)]", "", contents)
 
-    if "httpstenorcom" in contents:
+    if "httpstenorcom" in contents or "httpscdndiscordappcomattachments" in contents:
         if "httpstenorcom" in contents:
             gifid = re.sub(r"[^(0-9)]", "", message.content)
 
             results = json.loads(requests.get("https://tenor.googleapis.com/v2/posts?ids=%s&key=%s" % (gifid, "AIzaSyDWjZozo-pLXf4Zy6PK_ti75MCP0WVs7Fg")).content)
             data = requests.get(results["results"][0]["media_formats"]["mediumgif"]["url"]).content
+
+            with open(f"/mnt/2tbdrive/projects/RoyBot/downloads/attachment-{roy_counter.roy_count + 1}.gif", "wb") as download:
+                download.write(data)
+        else:
+            data = requests.get(original.replace("cdn.discordapp.com", "fixcdn.hyonsu.com")).content
 
             with open(f"/mnt/2tbdrive/projects/RoyBot/downloads/attachment-{roy_counter.roy_count + 1}.gif", "wb") as download:
                 download.write(data)
