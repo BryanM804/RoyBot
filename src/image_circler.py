@@ -110,7 +110,7 @@ def generate_roy_encoding():
     try:
         for roy_face in os.listdir("./roy_imgs"):
             roy_image = face_recognition.load_image_file(f"./roy_imgs/{roy_face}")
-            roy_encoding.append(face_recognition.face_encodings(roy_image, num_jitters = 3))
+            roy_encoding.append(face_recognition.face_encodings(roy_image, num_jitters = 3)[0])
         print("Generated roy face encodings.")
     except Exception as e:
         print(f"Unable to generate encoding: {e}")
@@ -148,7 +148,8 @@ def circle_face(img_location, success_dest=""):
     i = 0
     for face in encodings:
         result = face_recognition.compare_faces(roy_encoding, face, tolerance=0.5)
-        if True in result[0]:
+        print(result)
+        if True in result:
             roy_loc = face_locs[i]
             # top, right, bottom, left
 
