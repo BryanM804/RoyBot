@@ -2,6 +2,7 @@ import pytesseract
 import face_recognition
 import PIL
 import numpy
+import random
 from PIL import Image
 from PIL import ImageSequence
 from PIL import GifImagePlugin
@@ -13,7 +14,7 @@ TEST_MODE = False
 
 roy_encoding = []
 
-def circle_word(img, word, case_sens=False, success_dest=""):
+def circle_word(img, word, case_sens=False, overwrite_original=True):
     success = False
     imge = Image.open(img) if type(img) != PIL.GifImagePlugin.GifImageFile else img
     imge = imge.convert("RGB")
@@ -85,20 +86,25 @@ def circle_word(img, word, case_sens=False, success_dest=""):
             matching = False
             i = 0
     
-    if success and success_dest != "":
-        cv2.imwrite(success_dest, cv_img)
-    elif success:
-        cv2.imwrite(img, cv_img)
-    return success
+    newloc = img
 
-def circle_gif(gif_path, word, case_sens=False, success_dest=""):
+    if success and overwrite_original:
+        cv2.imwrite(img, cv_img)
+    elif success:
+        newloc = "/mnt/2tbdrive/projects/RoyBot/" + str(random.randrange(1, 1000)) + ".png"
+        cv2.imwrite(newloc, cv_img)
+    return (success, newloc)
+
+def circle_gif(gif_path, word, case_sens=False):
     gif = Image.open(gif_path)
     for frame in ImageSequence.Iterator(gif):
-        if circle_word(frame, word, False, success_dest):
-            return True
-        elif circle_face(frame, success_dest):
-            return True
-    return False
+        word_res = circle_word(frame, word, False, False)
+        face_res = circle_face(frame, False)
+        if word_res[0]:
+            return word_res
+        elif face_res[0]:
+            return face_res
+    return (False, "")
             
 def generate_roy_encoding():
     # This takes forever, so the encodings are cached after the first time they get generated
@@ -116,7 +122,7 @@ def generate_roy_encoding():
         print(f"Unable to generate encoding: {e}")
     
 
-def circle_face(img_location, success_dest=""):
+def circle_face(img_location, overwrite_original=True):
     # Check if img_location is valid to avoid errors
     if type(img_location) != PIL.GifImagePlugin.GifImageFile:
         image = face_recognition.load_image_file(img_location)
@@ -131,7 +137,7 @@ def circle_face(img_location, success_dest=""):
     face_locs = face_recognition.face_locations(image)
 
     if len(face_locs) == 0:
-        return
+        return (False, "")
     else:
         print("Image contains faces")
 
@@ -148,8 +154,8 @@ def circle_face(img_location, success_dest=""):
     i = 0
     for face in encodings:
         result = face_recognition.compare_faces(roy_encoding, face, tolerance=0.5)
-        print(result)
         if True in result:
+            print(result)
             roy_loc = face_locs[i]
             # top, right, bottom, left
 
@@ -167,12 +173,15 @@ def circle_face(img_location, success_dest=""):
             success = True
         i += 1
     
-    if success and success_dest != "":
-        cv2.imwrite(success_dest, cv_img)
-    elif success:
-        cv2.imwrite(img_location, cv_img)
+    newloc = img_location
 
-    return success
+    if success and overwrite_original:
+        cv2.imwrite(img_location, cv_img)
+    elif success:
+        newloc = "/mnt/2tbdrive/projects/RoyBot/" + str(random.randrange(1, 1000)) + ".png"
+        cv2.imwrite(newloc, cv_img)
+
+    return (success, newloc)
 
 if TEST_MODE:
     # circle_word_gif("/mnt/2tbdrive/projects/RoyBot/attachment-749.gif", "roy", success_dest="/mnt/2tbdrive/projects/RoyBot/circled.png")
