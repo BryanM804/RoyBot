@@ -106,7 +106,10 @@ def circle_gif(gif_path, word, case_sens=False):
     dur = gif.info.get("duration")
     contains_roy = False
     frames = []
+    i = 1
     for frame in ImageSequence.Iterator(gif):
+        print(f"Processing frame {i} of gif {gif_path[40:]}")
+        i += 1
         word_res = circle_word(frame, word, case_sens, gif_frame=True)
         if word_res[0]:
             contains_roy = True
@@ -152,10 +155,10 @@ def circle_face(img_location, overwrite_original=True, gif_frame=False):
     else:
         image = img_location.convert("RGB")
         image = numpy.array(image)
-    if len(image) != 0:
-        print("Face recognition loaded image")
-    else:
-        print(f"Face recognition failed to load image at {img_location}")
+
+    if len(image) == 0:
+        print(f"Face recognition failed to load image at {img_location}") 
+        return (False, "")
     
     face_locs = face_recognition.face_locations(image)
 
