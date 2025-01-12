@@ -41,7 +41,7 @@ async def handle_message(client, message):
     contents = original.lower().replace(" ", "")
     contents = re.sub(r"[^(a-z|A-Z)]", "", contents)
 
-    if "httpstenorcom" in contents or "httpscdndiscordappcomattachments" in contents:
+    if "httpstenorcom" in contents or "cdndiscordappcomattachments" in contents:
         path = f"/mnt/2tbdrive/projects/RoyBot/downloads/attachment-{roy_counter.roy_count + 1}-{message.id}.gif"
 
         if "httpstenorcom" in contents:
@@ -80,8 +80,10 @@ async def handle_message(client, message):
 def check_gif(queue, path, id, cid):
     res = image_circler.circle_gif(path, "roy")
     if res[0]:
-        os.rename(res[1], f"/mnt/2tbdrive/projects/RoyBot/downloads/attachment-{roy_counter.roy_count}.png")
-        queue.put((id, f"/mnt/2tbdrive/projects/RoyBot/downloads/attachment-{roy_counter.roy_count}.png", cid))
+        #os.rename(res[1], f"/mnt/2tbdrive/projects/RoyBot/downloads/attachment-{roy_counter.roy_count}.png")
+        os.rename(res[1], f"/mnt/2tbdrive/projects/RoyBot/downloads/attachment-{roy_counter.roy_count}.gif")
+        #queue.put((id, f"/mnt/2tbdrive/projects/RoyBot/downloads/attachment-{roy_counter.roy_count}.png", cid))
+        queue.put((id, f"/mnt/2tbdrive/projects/RoyBot/downloads/attachment-{roy_counter.roy_count}.gif", cid))
         print("queue populated")
 
 def check_image(queue, path, id, cid):

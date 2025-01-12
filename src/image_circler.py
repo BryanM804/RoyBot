@@ -14,9 +14,9 @@ TEST_MODE = False
 
 roy_encoding = []
 
-def circle_word(img, word, case_sens=False, overwrite_original=True):
+def circle_word(img, word, case_sens=False, overwrite_original=True, gif_frame=False):
     success = False
-    imge = Image.open(img) if type(img) != PIL.GifImagePlugin.GifImageFile else img
+    imge = Image.open(img) if not gif_frame else img
     imge = imge.convert("RGB")
     word = word if case_sens else word.lower()
 
@@ -88,22 +88,44 @@ def circle_word(img, word, case_sens=False, overwrite_original=True):
     
     newloc = img
 
-    if success and overwrite_original:
-        cv2.imwrite(img, cv_img)
-    elif success:
-        newloc = "/mnt/2tbdrive/projects/RoyBot/" + str(random.randrange(1, 1000)) + ".png"
-        cv2.imwrite(newloc, cv_img)
+    if gif_frame:
+        cv_img = cv_img[:, :, ::-1].copy()
+        return (success, Image.fromarray(cv_img))
+
+    if success:
+        if overwrite_original:
+            cv2.imwrite(img, cv_img)
+        else:
+            newloc = "/mnt/2tbdrive/projects/RoyBot/" + str(random.randrange(1, 1000)) + ".png"
+            cv2.imwrite(newloc, cv_img)
+
     return (success, newloc)
 
 def circle_gif(gif_path, word, case_sens=False):
     gif = Image.open(gif_path)
+    dur = gif.info.get("duration")
+    contains_roy = False
+    frames = []
     for frame in ImageSequence.Iterator(gif):
-        word_res = circle_word(frame, word, False, False)
-        face_res = circle_face(frame, False)
+        word_res = circle_word(frame, word, case_sens, gif_frame=True)
         if word_res[0]:
-            return word_res
-        elif face_res[0]:
-            return face_res
+            contains_roy = True
+            face_res = circle_face(word_res[1],  gif_frame=True)
+            if face_res[0]:
+                frames.append(face_res[1])
+            else:
+                frames.append(word_res[1])
+        else:
+            face_res = circle_face(frame,  gif_frame=True)
+            if face_res[0]:
+                contains_roy = True
+                frames.append(face_res[1])
+            else:
+                frames.append(face_res[1])
+    if contains_roy:
+        frames[0].save(gif_path, save_all=True, append_images=frames[1:], duration=dur , loop=0)
+        return (True, gif_path)
+    
     return (False, "")
             
 def generate_roy_encoding():
@@ -121,10 +143,11 @@ def generate_roy_encoding():
     except Exception as e:
         print(f"Unable to generate encoding: {e}")
     
-
-def circle_face(img_location, overwrite_original=True):
+# Saves image with a random name returned as the second item of a tuple unless overwrite_original = True
+# If gif_frame = True returns the Image object of the frame after circling
+def circle_face(img_location, overwrite_original=True, gif_frame=False):
     # Check if img_location is valid to avoid errors
-    if type(img_location) != PIL.GifImagePlugin.GifImageFile:
+    if not gif_frame:
         image = face_recognition.load_image_file(img_location)
     else:
         image = img_location.convert("RGB")
@@ -137,6 +160,8 @@ def circle_face(img_location, overwrite_original=True):
     face_locs = face_recognition.face_locations(image)
 
     if len(face_locs) == 0:
+        if gif_frame:
+            return (False, Image.fromarray(image))
         return (False, "")
     else:
         print("Image contains faces")
@@ -144,7 +169,7 @@ def circle_face(img_location, overwrite_original=True):
     if len(roy_encoding) == 0:
         generate_roy_encoding()
 
-    imge = Image.open(img_location) if type(img_location) != PIL.GifImagePlugin.GifImageFile else img_location
+    imge = Image.open(img_location) if not gif_frame else img_location
     imge = imge.convert("RGB")
     cv_img = numpy.array(imge)
     cv_img = cv_img[:, :, ::-1].copy()
@@ -175,12 +200,17 @@ def circle_face(img_location, overwrite_original=True):
     
     newloc = img_location
 
-    if success and overwrite_original:
-        cv2.imwrite(img_location, cv_img)
-    elif success:
-        newloc = "/mnt/2tbdrive/projects/RoyBot/" + str(random.randrange(1, 1000)) + ".png"
-        cv2.imwrite(newloc, cv_img)
+    if gif_frame:
+        cv_img = cv_img[:, :, ::-1].copy()
+        return (success, Image.fromarray(cv_img))
 
+    if success:
+        if overwrite_original:
+            cv2.imwrite(img_location, cv_img)
+        else:
+            newloc = "/mnt/2tbdrive/projects/RoyBot/" + str(random.randrange(1, 1000)) + ".png"
+            cv2.imwrite(newloc, cv_img)
+    
     return (success, newloc)
 
 if TEST_MODE:

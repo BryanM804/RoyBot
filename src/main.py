@@ -2,7 +2,7 @@ import discord
 import logging
 import asyncio
 import roy_counter
-from discord import PartialMessage, TextChannel, abc
+from discord import TextChannel, abc
 from image_circler import generate_roy_encoding
 from handlers import messages
 from handlers.messages import q
