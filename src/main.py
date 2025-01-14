@@ -11,6 +11,7 @@ from secret import secret_token
 
 intents = discord.Intents.default()
 intents.message_content = True
+intents.members = True
 
 client = discord.Client(intents=intents)
 logger = logging.FileHandler(filename="logs/discord.log", encoding="utf-8", mode="w")

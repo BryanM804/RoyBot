@@ -38,6 +38,17 @@ async def handle_message(client, message):
     await secret_box.secret_check(client, message)
 
     original = message.content
+    pings = re.findall(r"<@\d+>", original)
+    roy_pinged = False
+    pinged_names = []
+    if message.guild:
+        for ping in pings:
+            id = re.sub(r"[^\d]+", "", ping)
+            roy_pinged = True if int(id) == 112236423473573888 else False
+            name = message.guild.get_member(int(id)).display_name
+            pinged_names.append(name)
+            original = original.replace(ping, f"@{name}")
+        
     contents = original.lower().replace(" ", "")
     contents = re.sub(r"[^(a-z|A-Z)]", "", contents)
 
@@ -61,12 +72,14 @@ async def handle_message(client, message):
         p = multiprocessing.Process(target=check_gif, args=(q, path, message.id, message.channel.id))
         p.start()
 
-    elif "roy" in contents:
+    elif "roy" in contents or roy_pinged:
         roy_counter.inc_count(roy_counter.roy_count)
         try:
             # image_loader.get_web_image(original, message.author.display_name, message.author.display_avatar.url, message.author.color)
 
-            image_generator.generate_message_img(original, message.author.display_name, message.author.display_avatar.url, message.author.color)
+            image_generator.generate_message_img(original, message.author.display_name, message.author.display_avatar.url, message.author.color, pinged_names)
+            if roy_pinged and message.guild:
+                image_circler.circle_word(f"/mnt/2tbdrive/projects/RoyBot/message-imgs/roy-{roy_counter.roy_count}.png", f"@{message.guild.get_member(112236423473573888).display_name}")
             image_circler.circle_word(f"/mnt/2tbdrive/projects/RoyBot/message-imgs/roy-{roy_counter.roy_count}.png", "roy")
 
             await message.reply(f"# 🚨ROY ALERT🚨\nroy #{roy_counter.roy_count}", file=discord.File(f"/mnt/2tbdrive/projects/RoyBot/message-imgs/roy-{roy_counter.roy_count}.png"))

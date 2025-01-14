@@ -184,6 +184,7 @@ def circle_face(img_location, overwrite_original=True, gif_frame=False):
         result = face_recognition.compare_faces(roy_encoding, face, tolerance=0.5)
         if True in result:
             print(result)
+            print("Roy located")
             roy_loc = face_locs[i]
             # top, right, bottom, left
 
@@ -197,7 +198,6 @@ def circle_face(img_location, overwrite_original=True, gif_frame=False):
                 print(f"Drawing circle at {center_point} with radius {r}, image height: {h}")
 
             cv2.circle(cv_img, center_point, r, color, thickness)
-            print("Roy located")
             success = True
         i += 1
     
