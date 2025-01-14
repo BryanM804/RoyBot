@@ -81,6 +81,8 @@ def generate_message_img(message, user, avatar, color, pinged_names, secret=Fals
             message_strs.append(f"@{name}")
             i += len(message[i:index]) + len(name) + 1
         message_strs.append(message[i:])
+    else:
+        message_strs = [message]
     
 
     # Draw main message text:
