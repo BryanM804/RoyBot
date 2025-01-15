@@ -41,10 +41,14 @@ async def handle_message(client, message):
     pings = re.findall(r"<@\d+>", original)
     roy_pinged = False
     pinged_names = []
+    if "@everyone" in original:
+        pinged_names.append("everyone")
+    if "@here" in original:
+        pinged_names.append("here")
     if message.guild:
         for ping in pings:
             id = re.sub(r"[^\d]+", "", ping)
-            roy_pinged = True if int(id) == 112236423473573888 else False
+            roy_pinged = True if int(id) == 112236423473573888 else roy_pinged
             name = message.guild.get_member(int(id)).display_name
             pinged_names.append(name)
             original = original.replace(ping, f"@{name}")
