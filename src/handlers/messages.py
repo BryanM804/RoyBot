@@ -41,6 +41,7 @@ async def handle_message(client, message):
     pings = re.findall(r"<@\d+>", original)
     roy_pinged = False
     pinged_names = []
+
     if "@everyone" in original:
         pinged_names.append("everyone")
     if "@here" in original:
@@ -49,9 +50,18 @@ async def handle_message(client, message):
         for ping in pings:
             id = re.sub(r"[^\d]+", "", ping)
             roy_pinged = True if int(id) == 112236423473573888 else roy_pinged
-            name = message.guild.get_member(int(id)).display_name
-            pinged_names.append(name)
+            # Replaces spaces in display names with 0 width spaces so they aren't split later in the image generator
+            name = message.guild.get_member(int(id)).display_name.replace(" ", "\u200B")
+            pinged_names.append(f"@{name}")
             original = original.replace(ping, f"@{name}")
+
+    emojis = re.findall(r"<a?:[a-z|A-Z]+:\d+>", original)
+    emoji_ids = []
+    for emoji in emojis:
+        id = re.sub(r"<a?:([a-z]|[A-Z])+:", "", emoji)
+        id = id[:-1]
+        emoji_ids.append(id)
+        original = original.replace(emoji, id)
         
     contents = original.lower().replace(" ", "")
     contents = re.sub(r"[^(a-z|A-Z)]", "", contents)
@@ -81,7 +91,7 @@ async def handle_message(client, message):
         try:
             # image_loader.get_web_image(original, message.author.display_name, message.author.display_avatar.url, message.author.color)
 
-            image_generator.generate_message_img(original, message.author.display_name, message.author.display_avatar.url, message.author.color, pinged_names)
+            image_generator.generate_message_img(original, message.author.display_name, message.author.display_avatar.url, message.author.color, pinged_names, emoji_ids, client=client)
             if roy_pinged and message.guild:
                 image_circler.circle_word(f"/mnt/2tbdrive/projects/RoyBot/message-imgs/roy-{roy_counter.roy_count}.png", f"@{message.guild.get_member(112236423473573888).display_name}")
             image_circler.circle_word(f"/mnt/2tbdrive/projects/RoyBot/message-imgs/roy-{roy_counter.roy_count}.png", "roy")

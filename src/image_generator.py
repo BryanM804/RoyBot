@@ -1,39 +1,66 @@
 from PIL import Image, ImageDraw, ImageFont
 from io import BytesIO
 from datetime import datetime
+from emoji import EMOJI_DATA
+import discord
+import emoji_manager
 import roy_counter
 import requests
+import argparse
 
-# DO NOT FORGET TO CHANGE
-# Bot will not generate images if TEST_MODE is True
-TEST_MODE = False
+parser = argparse.ArgumentParser(description="Test mode to generate test image")
+parser.add_argument("--test_mode", type=bool, default=False)
 
-def longest_line(str):
-    lines = str.split("\n")
+# Bot will not save images correctly if TEST_MODE is True
+args = parser.parse_args()
+TEST_MODE = args.test_mode
+
+def longest_line(st):
+    lines = st.split("\n")
     max = ""
     for line in lines:
         max = line if len(line) > len(max) else max
     return max
 
-def generate_message_img(message, user, avatar, color, pinged_names, secret=False):
+# pinged names must be separated by \u200b in place of any spaces in the display name
+def generate_message_img(message, user, avatar, color, pinged_names, custom_emoji_ids, secret=False, client=None):
 
     # Add newlines to text that is too long
     words = message.split(" ")
     message = ""
+    len_msg = ""
+    message_strs = []
+    emoji_len_modifier = 0
     line_count = 0
     for word in words:
-        message += word + " "
-        if int(len(message) / 250) > line_count:
+        # Split words that are pings or emojis into separate strings
+        if word in custom_emoji_ids or word in pinged_names or word in EMOJI_DATA:
+            message_strs.append(message)
+            message_strs.append(word)
+            message = ""
+        else:
+            message += word + " "
+        
+        if word not in custom_emoji_ids or client == None:
+            len_msg += word + " "
+        else:
+            len_msg += ". "
+            emoji_len_modifier += 36
+
+        # Message line count increases every time the length hits 250
+        if int(len(len_msg) / 250) > line_count:
             message += "\n"
+            len_msg += "\n"
             line_count += 1
-    
+    message_strs.append(message)
+
     # Make a throw away draw to get the text length for the message image size
     gdraw = ImageDraw.Draw(Image.new("L", (10, 10), 255))
     gdraw.font = ImageFont.truetype("./font/ggsansRegular.ttf", size=32)
 
-    xlen = int(gdraw.textlength(longest_line(message), gdraw.font, font_size=32) + 234)
+    xlen = int(gdraw.textlength(longest_line(len_msg), gdraw.font, font_size=32) + 234 + emoji_len_modifier)
     x = xlen if xlen >= 750 else 750
-    y = (message.count("\n") * 40) + 182 # 40px for each new line in a message
+    y = (len_msg.count("\n") * 40) + 182 # 40px for each new line in a message
     
     # Mode, size, color
     message_img = Image.new("RGBA", (x, y), (49,51,56))
@@ -71,38 +98,50 @@ def generate_message_img(message, user, avatar, color, pinged_names, secret=Fals
     draw.font = ImageFont.truetype("./font/ggsansRegular.ttf", size=20)
     draw.text(((180 + offset), 58), f"Today at {current_time}", fill=(148,155,164))
 
-    # Separate message text into substrings for each pinged user
-    message_strs = []
-    if len(pinged_names) > 0:
-        i = 0
-        for name in pinged_names:
-            index = message.find(f"@{name}")
-            message_strs.append(message[i:index])
-            message_strs.append(f"@{name}")
-            i += len(message[i:index]) + len(name) + 1
-        message_strs.append(message[i:])
-    else:
-        message_strs = [message]
-    
-
     # Draw main message text:
     x = 162
     y = 86
-    for str in message_strs:
-        if str.replace("@", "") in pinged_names:
+    for st in message_strs:
+        if st in custom_emoji_ids or st in EMOJI_DATA:
+            emoji = None
+            # Draw an emoji
+            if st in EMOJI_DATA:
+                emoji = Image.open(emoji_manager.emoji_image(st)).convert("RGBA")
+            elif client != None:
+                ext = emoji_manager.save_emoji_image(int(st), client)
+                emoji = Image.open(f"./emojis/{st}.{ext}").convert("RGBA")
+            else:
+                draw.font = ImageFont.truetype("./font/ggsansRegular.ttf", size=32)
+                draw.text((x, y), st, fill=(219,222,225))
+
+            if emoji != None:
+                emoji = emoji.resize((40, 40))
+
+                emojipx = emoji.load()
+                ex, ey = emoji.size
+                for pxx in range(ex):
+                    for pxy in range(ey):
+                        if emojipx[pxx, pxy][3] <= 10: # If the pixel in the emoji is mostly transparent set it to the background color
+                            emojipx[pxx, pxy] = (49,51,56, 255) 
+
+                message_img.paste(emoji, (int(x), int(y)))
+                x += 42
+                continue
+        elif st in pinged_names:
             # Draw user ping with highlight
+            st = st.replace("\u200B", " ")
             draw.font = ImageFont.truetype("./font/ggsansMedium.ttf", size=32)
-            tl = draw.textlength(str, draw.font, font_size=32)
+            tl = draw.textlength(st, draw.font, font_size=32)
             hl_padding = 2
             # x1, y1, x2, y2
             hl_pos = (x - hl_padding, y - hl_padding, x + tl + hl_padding, y + 40 + hl_padding)
             draw.rectangle(hl_pos, fill=(60,66,112))
 
-            draw.text((x, y), str, fill=(227,229,254))
-        elif "\n" in str:
+            draw.text((x, y), st, fill=(227,229,254))
+        elif "\n" in st:
             # Draw Regular text with newlines
             draw.font = ImageFont.truetype("./font/ggsansRegular.ttf", size=32)
-            strs = str.split("\n")
+            strs = st.split("\n")
             for sub_str in strs:
                 draw.text((x, y), sub_str, fill=(219,222,225))
                 x = 162
@@ -113,8 +152,8 @@ def generate_message_img(message, user, avatar, color, pinged_names, secret=Fals
         else:
             # Draw regular text
             draw.font = ImageFont.truetype("./font/ggsansRegular.ttf", size=32)
-            draw.text((x, y), str, fill=(219,222,225))
-        x += draw.textlength(str, draw.font, font_size=32)
+            draw.text((x, y), st, fill=(219,222,225))
+        x += draw.textlength(st, draw.font, font_size=32)
 
 
     # Save image
@@ -129,4 +168,5 @@ def generate_message_img(message, user, avatar, color, pinged_names, secret=Fals
             message_img.save(img_file)
     
 if TEST_MODE:
-    generate_message_img("@roy royy baker, royy baker, royy baker,  royyy baker this message from mohammed kalakeen full face of kurdistan for youu royyy baker. you go check up in the docter; you have 2 yeal. your live is 2 yeal. 2 yeal from now, from today too 2 yeal o 1 yeal and 6 month o 2 yeal. you life. after this one you pass aweh. you go check up in the docter, this message from mohammed kalakeen full face of kurdistan. you do, do you good job for da usa for da 50 staet in 2 yeal. you do pull down iran for us, we want our kurdistan can-... new country no more iran no more iraq no more tourkey no more suri, full face of kurdistan; @Edgar the Horny Elf we give you", "Hoeless Headless Horseman", "https://cdn.discordapp.com/avatars/231186156757319680/109460aae45aef3221e7ebced37b3090.webp?size=128", None, ["roy", "Edgar the Horny Elf"])
+    generate_message_img("Test Message @roy 620295484635873300", "Test User", "https://cdn.discordapp.com/avatars/231186156757319680/109460aae45aef3221e7ebced37b3090.webp?size=128",
+                          None, ["@roy"], ["620295484635873300"])
