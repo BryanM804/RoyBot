@@ -115,14 +115,13 @@ def generate_message_img(message, user, avatar, color, pinged_names, custom_emoj
                 draw.text((x, y), st, fill=(219,222,225))
 
             if emoji != None:
-                emoji = emoji.resize((40, 40))
-
                 emojipx = emoji.load()
                 ex, ey = emoji.size
                 for pxx in range(ex):
                     for pxy in range(ey):
                         if emojipx[pxx, pxy][3] <= 10: # If the pixel in the emoji is mostly transparent set it to the background color
                             emojipx[pxx, pxy] = (49,51,56, 255) 
+                emoji = emoji.resize((40, 40))
 
                 message_img.paste(emoji, (int(x), int(y)))
                 x += 42
