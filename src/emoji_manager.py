@@ -1,6 +1,4 @@
-import discord
 import requests
-import emoji
 import os
 
 def save_emoji_image(emoji_id, client):
@@ -26,4 +24,9 @@ def save_emoji_image(emoji_id, client):
 def emoji_image(unicode_emoji):
     codepoint = "-".join(f"{ord(c):x}" for c in unicode_emoji)
     path = "./unicode_emojis/"
-    return f"{path}{codepoint}.png"
+    if os.path.exists(f"{path}{codepoint}.png"):
+        return f"{path}{codepoint}.png"
+    elif os.path.exists(f"{path}{codepoint}-fe0f.png"):
+        return f"{path}{codepoint}-fe0f.png"
+    else:
+        print(f"File {path}{codepoint}.png does not exist.")

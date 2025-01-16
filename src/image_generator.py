@@ -2,11 +2,13 @@ from PIL import Image, ImageDraw, ImageFont
 from io import BytesIO
 from datetime import datetime
 from emoji import EMOJI_DATA
-import discord
 import emoji_manager
 import roy_counter
 import requests
 import argparse
+
+# This doesn't even work anyway
+REGIONAL_INDICATORS = ["🇦", "🇧", "🇨", "🇩", "🇪", "🇫", "🇬", "🇭", "🇮", "🇯", "🇰", "🇱", "🇲", "🇳", "🇴", "🇵", "🇶", "🇷", "🇸", "🇹", "🇺", "🇷", "🇻", "🇼", "🇽", "🇾", "🇿"]
 
 parser = argparse.ArgumentParser(description="Test mode to generate test image")
 parser.add_argument("--test_mode", type=bool, default=False)
@@ -30,34 +32,95 @@ def generate_message_img(message, user, avatar, color, pinged_names, custom_emoj
     message = ""
     len_msg = ""
     message_strs = []
-    emoji_len_modifier = 0
     line_count = 0
+    emoji_i = 0
+    name_i = 0
+
     for word in words:
-        # Split words that are pings or emojis into separate strings
-        if word in custom_emoji_ids or word in pinged_names or word in EMOJI_DATA:
-            message_strs.append(message)
+        # Separate pinged names and emojis from plain text
+        if len(custom_emoji_ids) > 0 or len(pinged_names) > 0:
+            if message != "":
+                message_strs.append(message)
+            message = ""
+            while (len(custom_emoji_ids) > emoji_i and custom_emoji_ids[emoji_i] in word) or (len(pinged_names) > name_i and pinged_names[name_i] in word):
+                e_pos = word.find(custom_emoji_ids[emoji_i]) if len(custom_emoji_ids) > emoji_i else -1
+                n_pos = word.find(pinged_names[name_i]) if len(pinged_names) > name_i else -1
+                if (n_pos < e_pos and n_pos != -1) or (e_pos == -1 and n_pos != -1):
+                    message_strs.append(word[0:n_pos])
+                    message_strs.append(pinged_names[name_i])
+                    len_msg += word[0:n_pos] + pinged_names[name_i]
+                    word = word[n_pos + len(pinged_names[name_i]):]
+                    name_i += 1
+                else:
+                    message_strs.append(word[0:e_pos])
+                    message_strs.append(custom_emoji_ids[emoji_i])
+                    if client != None:
+                        len_msg += ".."
+                    else:
+                        len_msg += word[0:e_pos] + custom_emoji_ids[emoji_i]
+                    word = word[e_pos + len(custom_emoji_ids[emoji_i]):]
+                    emoji_i += 1
+        if word in EMOJI_DATA or word in REGIONAL_INDICATORS:
+            if message != "":
+                message_strs.append(message)
             message_strs.append(word)
             message = ""
-        else:
-            message += word + " "
-        
-        if word not in custom_emoji_ids or client == None:
-            len_msg += word + " "
-        else:
-            len_msg += ". "
-            emoji_len_modifier += 36
+            len_msg += ".."
 
-        # Message line count increases every time the length hits 250
-        if int(len(len_msg) / 250) > line_count:
+        else:
+            # This is annoying to read, some unicode emojis are multiple characters and some aren't
+            # If they are multiple characters they are bridged together with "\u200d"
+            # This will change if I think of a better way to split the original message apart
+            was_emoji = False
+            was_bridge = False
+            for c in word:
+                if was_emoji and c == "\u200d":
+                    message += c
+                    was_bridge = True
+                    continue
+                elif was_emoji and was_bridge and c in EMOJI_DATA:
+                    message += c
+                    was_bridge = False
+                    continue
+                elif was_emoji:
+                    message_strs.append(message)
+                    message = ""
+                    len_msg += ".."
+                    was_emoji = False
+
+                if c in EMOJI_DATA or c in REGIONAL_INDICATORS:
+                    if not was_emoji and message != "" and message != " ":
+                        message_strs.append(message)
+                        message = ""
+                    was_emoji = True 
+                    message += c   
+                else:
+                    message += c
+                    len_msg += c
+            if was_emoji:
+                message_strs.append(message)
+                message = ""
+                len_msg += ".."
+            message += " "
+            len_msg += " "
+
+        # Message line count increases every time the length hits 135
+        # This usually makes the lines line up the same as they would on a 1080p fullscreen window
+        if int(len(len_msg) / 135) > line_count:
             message += "\n"
             len_msg += "\n"
             line_count += 1
-    message_strs.append(message)
+    if message != "" and message != " ":
+        message_strs.append(message)
+
+    if TEST_MODE: print(message_strs)
 
     # Make a throw away draw to get the text length for the message image size
     gdraw = ImageDraw.Draw(Image.new("L", (10, 10), 255))
     gdraw.font = ImageFont.truetype("./font/ggsansRegular.ttf", size=32)
 
+    # Emoji length modifier makes sure to add extra space for the emojis in the text
+    emoji_len_modifier = longest_line(len_msg).count("..") * 30
     xlen = int(gdraw.textlength(longest_line(len_msg), gdraw.font, font_size=32) + 234 + emoji_len_modifier)
     x = xlen if xlen >= 750 else 750
     y = (len_msg.count("\n") * 40) + 182 # 40px for each new line in a message
@@ -102,10 +165,10 @@ def generate_message_img(message, user, avatar, color, pinged_names, custom_emoj
     x = 162
     y = 86
     for st in message_strs:
-        if st in custom_emoji_ids or st in EMOJI_DATA:
+        if st in custom_emoji_ids or st in EMOJI_DATA or st in REGIONAL_INDICATORS:
             emoji = None
             # Draw an emoji
-            if st in EMOJI_DATA:
+            if st in EMOJI_DATA or st in REGIONAL_INDICATORS:
                 emoji = Image.open(emoji_manager.emoji_image(st)).convert("RGBA")
             elif client != None:
                 ext = emoji_manager.save_emoji_image(int(st), client)
@@ -121,7 +184,7 @@ def generate_message_img(message, user, avatar, color, pinged_names, custom_emoj
                     for pxy in range(ey):
                         if emojipx[pxx, pxy][3] <= 10: # If the pixel in the emoji is mostly transparent set it to the background color
                             emojipx[pxx, pxy] = (49,51,56, 255) 
-                emoji = emoji.resize((40, 40))
+                emoji = emoji.resize((39, 39))
 
                 message_img.paste(emoji, (int(x), int(y)))
                 x += 42
@@ -167,5 +230,5 @@ def generate_message_img(message, user, avatar, color, pinged_names, custom_emoj
             message_img.save(img_file)
     
 if TEST_MODE:
-    generate_message_img("Test Message @roy 620295484635873300", "Test User", "https://cdn.discordapp.com/avatars/231186156757319680/109460aae45aef3221e7ebced37b3090.webp?size=128",
-                          None, ["@roy"], ["620295484635873300"])
+    generate_message_img("this guy 😍  ROY 1240141791097917481 ROY MILTON BA717968089236373534 ER O 1268029785972412416 Y DR(OY)INK Ro1268033057802420367  YS MILT 1111497032973168755  ROYO ROY RO         Y ✅", "Test User", "https://cdn.discordapp.com/avatars/231186156757319680/109460aae45aef3221e7ebced37b3090.webp?size=128",
+                          None, [], ["1240141791097917481", "717968089236373534", "1268029785972412416", "1268033057802420367", "1111497032973168755"])
