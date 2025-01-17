@@ -31,7 +31,10 @@ async def send_alert(cid, messageid, roy_num, file_path):
         except Exception as e:
             print(f"Unable to find channel: {cid}\n{e}")
     else:
-        await channel.send(content=f"# 🚨ROY ALERT🚨\nroy #{roy_num}", reference=channel.get_partial_message(int(messageid)), file=discord.File(file_path))
+        try:
+            await channel.send(content=f"# 🚨ROY ALERT🚨\nroy #{roy_num}", reference=channel.get_partial_message(int(messageid)), file=discord.File(file_path))
+        except Exception as e:
+            print(f"Couldn't send message: {e}")
 
 async def check_replies(queue):
     while True:
