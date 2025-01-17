@@ -1,6 +1,4 @@
 import roy_counter
-import console_commands
-import discord
 
 async def handle_ready(client):
     print("Bot Ready!")
