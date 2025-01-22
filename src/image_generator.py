@@ -45,12 +45,16 @@ def generate_message_img(message, user, avatar, color, pinged_names, custom_emoj
                 e_pos = word.find(custom_emoji_ids[emoji_i]) if len(custom_emoji_ids) > emoji_i else -1
                 n_pos = word.find(pinged_names[name_i]) if len(pinged_names) > name_i else -1
                 if (n_pos < e_pos and n_pos != -1) or (e_pos == -1 and n_pos != -1):
+                    # name appears first
                     message_strs.append(word[0:n_pos])
                     message_strs.append(pinged_names[name_i])
-                    len_msg += word[0:n_pos] + pinged_names[name_i]
+                    len_msg += word[0:n_pos]
+                    # Simpler to use this function to add the length than it would be to mess with fonts and stuff later
+                    _, _, len_msg = emoji_manager.separate_emoji(pinged_names[name_i], "", len_msg)
                     word = word[n_pos + len(pinged_names[name_i]):]
                     name_i += 1
                 else:
+                    # emoji appears first
                     message_strs.append(word[0:e_pos])
                     message_strs.append(custom_emoji_ids[emoji_i])
                     if client != None:
@@ -215,5 +219,5 @@ def generate_message_img(message, user, avatar, color, pinged_names, custom_emoj
             message_img.save(img_file)
     
 if TEST_MODE:
-    generate_message_img("this guy 😍 @The\u200bchocolates\u200b🍫🍫 ROY 🧎🏿🧎🏿 🧎🏿 1240141791097917481 ROY MILTON BA717968089236373534 ER O 1268029785972412416 Y DR(OY)INK Ro1268033057802420367  YS MILT 1111497032973168755  ROYO ROY RO         Y ✅", "Test User", "https://cdn.discordapp.com/avatars/231186156757319680/109460aae45aef3221e7ebced37b3090.webp?size=128",
-                          None, ["@The\u200bchocolates\u200b🍫🍫"], ["1240141791097917481", "717968089236373534", "1268029785972412416", "1268033057802420367", "1111497032973168755"])
+    generate_message_img("this guy 😍 @The\u200bchocolates\u200b🍫🍫@The\u200bchocolates\u200b🍫🍫 @The\u200bchocolates\u200b🍫🍫 @The\u200bchocolates\u200b🍫🍫 @The\u200bchocolates\u200b🍫🍫@The\u200bchocolates\u200b🍫🍫ROY 🧎🏿🧎🏿 🧎🏿 1240141791097917481 ROY MILTON BA717968089236373534 ER O 1268029785972412416 Y DR(OY)INK Ro1268033057802420367  YS MILT 1111497032973168755  ROYO ROY RO         Y ✅", "Test User", "https://cdn.discordapp.com/avatars/231186156757319680/109460aae45aef3221e7ebced37b3090.webp?size=128",
+                          None, ["@The\u200bchocolates\u200b🍫🍫", "@The\u200bchocolates\u200b🍫🍫", "@The\u200bchocolates\u200b🍫🍫", "@The\u200bchocolates\u200b🍫🍫", "@The\u200bchocolates\u200b🍫🍫", "@The\u200bchocolates\u200b🍫🍫"], ["1240141791097917481", "717968089236373534", "1268029785972412416", "1268033057802420367", "1111497032973168755"])

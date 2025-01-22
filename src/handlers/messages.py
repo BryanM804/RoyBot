@@ -35,8 +35,6 @@ async def handle_message(client, message):
                 p = multiprocessing.Process(target=check_image, args=(q, path, message.id, message.channel.id))
                 p.start()
 
-    await secret_box.secret_check(client, message)
-
     original = message.content
     pings = re.findall(r"<@\d+>", original)
     roy_pinged = False
@@ -62,6 +60,8 @@ async def handle_message(client, message):
         id = id[:-1]
         emoji_ids.append(id)
         original = original.replace(emoji, id)
+
+    await secret_box.secret_check(client, message, pinged_names, emoji_ids)
         
     contents = original.lower().replace(" ", "")
     contents = re.sub(r"[^(a-z|A-Z)]", "", contents)

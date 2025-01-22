@@ -1,8 +1,10 @@
+import os
 import discord
 import logging
 import asyncio
+import importlib
 import roy_counter
-from discord import TextChannel, abc
+from discord import TextChannel, abc, app_commands
 from image_circler import generate_roy_encoding
 from handlers import messages
 from handlers.messages import q
@@ -14,6 +16,7 @@ intents.message_content = True
 intents.members = True
 
 client = discord.Client(intents=intents)
+command_tree = app_commands.CommandTree(client=client)
 logger = logging.FileHandler(filename="logs/discord.log", encoding="utf-8", mode="w")
 
 def convert_channel(channel: abc.GuildChannel) -> TextChannel:
@@ -45,6 +48,7 @@ async def check_replies(queue):
 
 @client.event
 async def on_ready():
+    await command_tree.sync()
     generate_roy_encoding()
     await ready.handle_ready(client)
     task = asyncio.create_task(check_replies(q))
@@ -53,5 +57,10 @@ async def on_ready():
 @client.event
 async def on_message(message):
     await messages.handle_message(client, message)
+
+for file in os.listdir("./src/commands"):
+    if file.endswith(".py"):
+        module = importlib.import_module(f"commands.{file[:-3]}")
+        module.setup(command_tree)
 
 client.run(secret_token.secret_token, log_handler=logger)
