@@ -169,6 +169,7 @@ def generate_message_img(message, user, avatar, color, pinged_names, custom_emoj
             st = st.replace("\u200B", " ")
             
             elements, _ = emoji_manager.separate_emoji(st)
+            print(elements)
             tl = 0
             for e in elements:
                 if e in EMOJI_DATA:
@@ -219,5 +220,5 @@ def generate_message_img(message, user, avatar, color, pinged_names, custom_emoj
             message_img.save(img_file)
     
 if TEST_MODE:
-    generate_message_img("this guy 😍 @The\u200bchocolates\u200b🍫🍫@The\u200bchocolates\u200b🍫🍫 @The\u200bchocolates\u200b🍫🍫 @The\u200bchocolates\u200b🍫🍫 @The\u200bchocolates\u200b🍫🍫@The\u200bchocolates\u200b🍫🍫ROY 🧎🏿🧎🏿 🧎🏿 1240141791097917481 ROY MILTON BA717968089236373534 ER O 1268029785972412416 Y DR(OY)INK Ro1268033057802420367  YS MILT 1111497032973168755  ROYO ROY RO         Y ✅", "Test User", "https://cdn.discordapp.com/avatars/231186156757319680/109460aae45aef3221e7ebced37b3090.webp?size=128",
-                          None, ["@The\u200bchocolates\u200b🍫🍫", "@The\u200bchocolates\u200b🍫🍫", "@The\u200bchocolates\u200b🍫🍫", "@The\u200bchocolates\u200b🍫🍫", "@The\u200bchocolates\u200b🍫🍫", "@The\u200bchocolates\u200b🍫🍫"], ["1240141791097917481", "717968089236373534", "1268029785972412416", "1268033057802420367", "1111497032973168755"])
+    generate_message_img("this guy 😍 @Edgar\u200bThe\u200bHorny\u200bElf @The\u200bchocolates\u200b🍫🍫@The\u200bchocolates\u200b🍫🍫 @The\u200bchocolates\u200b🍫🍫 @The\u200bchocolates\u200b🍫🍫 @The\u200bchocolates\u200b🍫🍫@The\u200bchocolates\u200b🍫🍫ROY 🧎🏿🧎🏿 🧎🏿 1240141791097917481 ROY MILTON BA717968089236373534 ER O 1268029785972412416 Y DR(OY)INK Ro1268033057802420367  YS MILT 1111497032973168755  ROYO ROY RO         Y ✅", "Test User", "https://cdn.discordapp.com/avatars/231186156757319680/109460aae45aef3221e7ebced37b3090.webp?size=128",
+                          None, ["@Edgar\u200bThe\u200bHorny\u200bElf", "@The\u200bchocolates\u200b🍫🍫", "@The\u200bchocolates\u200b🍫🍫", "@The\u200bchocolates\u200b🍫🍫", "@The\u200bchocolates\u200b🍫🍫", "@The\u200bchocolates\u200b🍫🍫", "@The\u200bchocolates\u200b🍫🍫"], ["1240141791097917481", "717968089236373534", "1268029785972412416", "1268033057802420367", "1111497032973168755"])

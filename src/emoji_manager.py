@@ -46,6 +46,7 @@ def emoji_image(unicode_emoji):
 def separate_emoji(word, message="", len_msg=None):
     # This is annoying to read, some unicode emojis are multiple characters and some aren't
     # This will separate them in case there are mulitple without spaces in between
+    initmsg = message
     was_emoji = False
     message_strs = []
 
@@ -69,7 +70,7 @@ def separate_emoji(word, message="", len_msg=None):
         else:
             message += c
             if len_msg != None: len_msg += c
-    if was_emoji:
+    if was_emoji or initmsg == "":
         message_strs.append(message)
         message = ""
         if len_msg != None: len_msg += ".."

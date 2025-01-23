@@ -1,26 +1,3 @@
-[2025-01-22 15:18:04] [INFO    ] discord.client: logging in using static token
-[2025-01-22 15:18:04] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: f28f36ca91242f1ccf507571c59830b6).
-[2025-01-22 15:18:43] [ERROR   ] discord.app_commands.tree: Ignoring exception in command 'roymemory'
-Traceback (most recent call last):
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/discord/app_commands/commands.py", line 858, in _do_call
-    return await self._callback(interaction, **params)  # type: ignore
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/mnt/2tbdrive/projects/RoyBot/src/commands/roymemory.py", line 12, in roymemory
-    await interaction.response.send_message(f"Invalid roy number. Current roy number is {roy_count}", ephemeral=True)
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/discord/interactions.py", line 855, in send_message
-    await adapter.create_interaction_response(
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/discord/webhook/async_.py", line 221, in request
-    raise NotFound(response, data)
-discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/discord/app_commands/tree.py", line 1310, in _call
-    await command._invoke_with_namespace(interaction, namespace)
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
-    return await self._do_call(interaction, transformed_values)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/mnt/2tbdrive/projects/RoyBot/venv/lib/python3.12/site-packages/discord/app_commands/commands.py", line 876, in _do_call
-    raise CommandInvokeError(self, e) from e
-discord.app_commands.errors.CommandInvokeError: Command 'roymemory' raised an exception: NotFound: 404 Not Found (error code: 10062): Unknown interaction
+[2025-01-22 17:57:33] [INFO    ] discord.client: logging in using static token
+[2025-01-22 17:57:33] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: 6d0ddbb6527aa8292446197ca67c6835).
+[2025-01-22 18:59:04] [INFO    ] discord.gateway: Shard ID None has successfully RESUMED session 6d0ddbb6527aa8292446197ca67c6835.
