@@ -4,13 +4,13 @@ import requests
 import json
 import discord
 import roy_counter
-import multiprocessing
-from pytenor import Tenor
+import threading
+import queue
 from secret import secret_box
 import image_generator
 import image_circler
 
-q = multiprocessing.Queue()
+q = queue.Queue()
 
 async def getFilePath():
     for file in os.listdir("/mnt/2tbdrive/projects/RoyBot/message-imgs"):
@@ -29,11 +29,11 @@ async def handle_message(client, message):
             await att.save(path, use_cached=True)
             
             if ext == "gif":
-                p = multiprocessing.Process(target=check_gif, args=(q, path, message.id, message.channel.id))
-                p.start()
+                t = threading.Thread(target=check_gif, args=(q, path, message.id, message.channel.id))
+                t.start()
             else:
-                p = multiprocessing.Process(target=check_image, args=(q, path, message.id, message.channel.id))
-                p.start()
+                t = threading.Thread(target=check_image, args=(q, path, message.id, message.channel.id))
+                t.start()
 
     original = message.content
     pings = re.findall(r"<@\d+>", original)
@@ -83,8 +83,8 @@ async def handle_message(client, message):
             with open(path, "wb") as download:
                 download.write(data)
 
-        p = multiprocessing.Process(target=check_gif, args=(q, path, message.id, message.channel.id))
-        p.start()
+        t = threading.Thread(target=check_gif, args=(q, path, message.id, message.channel.id))
+        t.start()
 
     elif "roy" in contents or roy_pinged:
         roy_counter.inc_count(roy_counter.roy_count)

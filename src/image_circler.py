@@ -1,18 +1,44 @@
 import pytesseract
 import face_recognition
-import PIL
 import numpy
 import random
 from PIL import Image
 from PIL import ImageSequence
-from PIL import GifImagePlugin
 import cv2
 import re
 import os
+from dlib import DLIB_USE_CUDA
 
 TEST_MODE = False
 
 roy_encoding = []
+
+FRAME_HEIGHT = 0.70
+FRAME_WIDTH = 0.70
+MAX_HEIGHT = 640
+MAX_WIDTH = 640
+
+def resize_image(image, is_cvimg=False):
+    if is_cvimg:
+        h, w, _ = image.shape
+    else:
+        w, h = image.size
+    
+    if h > MAX_HEIGHT:
+        change_ratio = MAX_HEIGHT / h
+        h = MAX_HEIGHT
+        w = w * change_ratio
+    
+    if w > MAX_WIDTH:
+        change_ratio = MAX_WIDTH / w
+        w = MAX_WIDTH
+        h = h * change_ratio
+
+    if is_cvimg:
+        return cv2.resize(image, (int(FRAME_WIDTH * w), int(FRAME_HEIGHT * h)))
+    else:
+        return image.resize((int(FRAME_WIDTH * w), int(FRAME_HEIGHT * h)))
+
 
 def circle_word(img, word, case_sens=False, overwrite_original=True, gif_frame=False):
     success = False
@@ -104,12 +130,24 @@ def circle_word(img, word, case_sens=False, overwrite_original=True, gif_frame=F
 def circle_gif(gif_path, word, case_sens=False):
     gif = Image.open(gif_path)
     dur = gif.info.get("duration")
+    skip_frames = False
+    if gif.n_frames > 200:
+        skip_frames = True
+        dur *= 2
+        # Need duration to be twice as long if you skip every other frame to keep the timing
     contains_roy = False
     frames = []
     i = 1
+
     for frame in ImageSequence.Iterator(gif):
+        if skip_frames and i % 2 == 0:
+            i += 1
+            continue
+
         print(f"Processing frame {i} of gif {gif_path[40:]}")
         i += 1
+
+        frame = resize_image(frame, False)
         word_res = circle_word(frame, word, case_sens, gif_frame=True)
         if word_res[0]:
             contains_roy = True
@@ -134,6 +172,8 @@ def circle_gif(gif_path, word, case_sens=False):
 def generate_roy_encoding():
     # This takes forever, so the encodings are cached after the first time they get generated
     # Changing the num_jitters will speed it up if necessary
+    print(f"CUDA enabled: {DLIB_USE_CUDA}")
+
     global roy_encoding
     if len(roy_encoding) != 0:
         return
@@ -160,7 +200,7 @@ def circle_face(img_location, overwrite_original=True, gif_frame=False):
         print(f"Face recognition failed to load image at {img_location}") 
         return (False, "")
     
-    face_locs = face_recognition.face_locations(image)
+    face_locs = face_recognition.face_locations(image, model="cnn")
 
     if len(face_locs) == 0:
         if gif_frame:
