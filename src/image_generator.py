@@ -124,8 +124,25 @@ def generate_message_img(message, user, avatar, color, pinged_names, custom_emoj
 
     # Draw username text
     draw = ImageDraw.Draw(message_img)
-    draw.font = ggsansmedium
-    draw.text((162, 46), user, (120, 120, 120)) if TEST_MODE else draw.text((162, 46), user, (color.r, color.g, color.b))
+    elements, _ = emoji_manager.separate_emoji(user)
+    offset = 0
+    tmpx = 162
+    tmpy = 46
+    # Calculate offset for later
+    for e in elements:
+        if e in EMOJI_DATA:
+            offset += draw.textlength(e, segoeuiemoji, font_size=32)
+        else:
+            offset += draw.textlength(e, ggsansmedium, font_size=32)
+    # Draw emojis in emoji font if username has emojis
+    for e in elements:
+        if e in EMOJI_DATA:
+            draw.font = segoeuiemoji
+            draw.text((tmpx, tmpy + 8), e, embedded_color=True)
+        else:
+            draw.font = ggsansmedium
+            draw.text((tmpx, tmpy), e, (color.r, color.g, color.b)) if not TEST_MODE else draw.text((tmpx, tmpy), e, (120, 120, 120))
+        tmpx += draw.textlength(e, draw.font, font_size=32)
 
     # Draw time string
     offset = draw.textlength(user, draw.font, font_size=32)
