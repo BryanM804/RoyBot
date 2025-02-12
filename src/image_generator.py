@@ -37,13 +37,14 @@ def generate_message_img(message, user, avatar, color, pinged_names, custom_emoj
 
     for word in words:
         # Separate pinged names and emojis from plain text
-        if len(custom_emoji_ids) > 0 or len(pinged_names) > 0:
+        if len(custom_emoji_ids) > emoji_i or len(pinged_names) > name_i:
             if message != "":
                 message_strs.append(message)
             message = ""
             while (len(custom_emoji_ids) > emoji_i and custom_emoji_ids[emoji_i] in word) or (len(pinged_names) > name_i and pinged_names[name_i] in word):
                 e_pos = word.find(custom_emoji_ids[emoji_i]) if len(custom_emoji_ids) > emoji_i else -1
                 n_pos = word.find(pinged_names[name_i]) if len(pinged_names) > name_i else -1
+
                 if (n_pos < e_pos and n_pos != -1) or (e_pos == -1 and n_pos != -1):
                     # name appears first
                     message_strs.append(word[0:n_pos])
@@ -93,6 +94,7 @@ def generate_message_img(message, user, avatar, color, pinged_names, custom_emoj
 
     # Emoji length modifier makes sure to add extra space for the emojis in the text
     emoji_len_modifier = longest_line(len_msg).count("..") * 30
+
     xlen = int(gdraw.textlength(longest_line(len_msg), gdraw.font, font_size=32) + 234 + emoji_len_modifier)
     x = xlen if xlen >= 750 else 750
     y = (len_msg.count("\n") * 40) + 182 # 40px for each new line in a message
@@ -220,5 +222,5 @@ def generate_message_img(message, user, avatar, color, pinged_names, custom_emoj
             message_img.save(img_file)
     
 if TEST_MODE:
-    generate_message_img("this guy 😍 @Edgar\u200bThe\u200bHorny\u200bElf @The\u200bchocolates\u200b🍫🍫@The\u200bchocolates\u200b🍫🍫 @The\u200bchocolates\u200b🍫🍫 @The\u200bchocolates\u200b🍫🍫 @The\u200bchocolates\u200b🍫🍫@The\u200bchocolates\u200b🍫🍫ROY 🧎🏿🧎🏿 🧎🏿 1240141791097917481 ROY MILTON BA717968089236373534 ER O 1268029785972412416 Y DR(OY)INK Ro1268033057802420367  YS MILT 1111497032973168755  ROYO ROY RO         Y ✅", "Test User", "https://cdn.discordapp.com/avatars/231186156757319680/109460aae45aef3221e7ebced37b3090.webp?size=128",
-                          None, ["@Edgar\u200bThe\u200bHorny\u200bElf", "@The\u200bchocolates\u200b🍫🍫", "@The\u200bchocolates\u200b🍫🍫", "@The\u200bchocolates\u200b🍫🍫", "@The\u200bchocolates\u200b🍫🍫", "@The\u200bchocolates\u200b🍫🍫", "@The\u200bchocolates\u200b🍫🍫"], ["1240141791097917481", "717968089236373534", "1268029785972412416", "1268033057802420367", "1111497032973168755"])
+    generate_message_img("", "Test User", "https://cdn.discordapp.com/avatars/231186156757319680/109460aae45aef3221e7ebced37b3090.webp?size=128",
+                          None, [], [])

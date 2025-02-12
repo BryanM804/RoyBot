@@ -73,7 +73,8 @@ def separate_emoji(word, message="", len_msg=None):
     if was_emoji or initmsg == "":
         message_strs.append(message)
         message = ""
-        if len_msg != None: len_msg += ".."
+        if len_msg != None and was_emoji: 
+            len_msg += ".."
     
     if len_msg != None:
         return (message_strs, message, len_msg)
